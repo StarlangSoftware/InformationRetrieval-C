@@ -1,0 +1,52 @@
+//
+// Created by Olcay Taner YILDIZ on 29.08.2023.
+//
+
+#include <stdlib.h>
+#include <FileUtils.h>
+#include <StringUtils.h>
+#include "PositionalPosting.h"
+#include "Posting.h"
+
+Positional_posting_ptr create_positional_posting(int doc_id) {
+    Positional_posting_ptr result = malloc(sizeof(Positional_posting));
+    result->positions = create_array_list();
+    result->doc_id = doc_id;
+    return result;
+}
+
+Positional_posting_ptr clone_positional_posting(Positional_posting_ptr positional_posting) {
+    Positional_posting_ptr result = malloc(sizeof(Positional_posting));
+    result->positions = create_array_list();
+    for (int i = 0; i < positional_posting->positions->size; i++){
+        Posting_ptr posting = array_list_get(positional_posting->positions, i);
+        add_position(result, posting->id);
+    }
+    result->doc_id = positional_posting->doc_id;
+    return result;
+}
+
+void free_positional_posting(Positional_posting_ptr positional_posting) {
+    free_array_list(positional_posting->positions, (void (*)(void *)) free_posting);
+    free(positional_posting);
+}
+
+void add_position(Positional_posting_ptr positional_posting, int position) {
+    array_list_add(positional_posting->positions, create_posting(position));
+}
+
+int size_of_positional_posting(const Positional_posting* positional_posting) {
+    return positional_posting->positions->size;
+}
+
+char *positional_posting_to_string(const Positional_posting *positional_posting) {
+    char tmp[MAX_LINE_LENGTH];
+    sprintf(tmp, "%d %d", positional_posting->doc_id, size_of_positional_posting(positional_posting));
+    for (int i = 0; i < positional_posting->positions->size; i++){
+        Posting_ptr posting = array_list_get(positional_posting->positions, i);
+        sprintf(tmp, "%s%d ", tmp, posting->id);
+    }
+    char *result = NULL;
+    result = str_copy(result, tmp);
+    return result;
+}
