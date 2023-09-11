@@ -11,7 +11,7 @@
 
 Category_node_ptr create_category_node(char *name, Category_node_ptr parent) {
     Category_node_ptr result = malloc(sizeof(Category_node));
-    result->category_words = split(name);
+    result->category_words = str_split(name, ' ');
     result->children = create_array_list();
     result->counts = create_counter_hash_map((unsigned int (*)(const void *, int)) hash_function_int,
                                              (int (*)(const void *, const void *)) compare_int);
@@ -27,22 +27,22 @@ void add_child(Category_node_ptr category_node, Category_node_ptr child) {
 }
 
 void free_category_node(Category_node_ptr category_node) {
-    free_array_list(category_node->category_words, (void (*)(void *)) free_string_ptr);
+    free_array_list(category_node->category_words, (void (*)(void *)) free);
     free_array_list(category_node->children, (void (*)(void *)) free_category_node);
     free_counter_hash_map2(category_node->counts, free);
     free(category_node);
 }
 
 char *get_name(const Category_node* category_node) {
-    unsigned long size = 1 + strlen(((String_ptr) array_list_get(category_node->category_words, 0))->s);
+    unsigned long size = 1 + strlen((char*) array_list_get(category_node->category_words, 0));
     for (int i = 0; i < category_node->category_words->size; i++){
-        size += 1 + strlen(((String_ptr) array_list_get(category_node->category_words, i))->s);
+        size += 1 + strlen((char*) array_list_get(category_node->category_words, i));
     }
     char* result = malloc(size * sizeof(char));
-    strcpy(result, ((String_ptr) array_list_get(category_node->category_words, 0))->s);
+    strcpy(result, (char*) array_list_get(category_node->category_words, 0));
     for (int i = 1; i < category_node->category_words->size; i++){
         strcat(result, " ");
-        strcat(result, ((String_ptr) array_list_get(category_node->category_words, i))->s);
+        strcat(result, (char*) array_list_get(category_node->category_words, i));
     }
     return result;
 }

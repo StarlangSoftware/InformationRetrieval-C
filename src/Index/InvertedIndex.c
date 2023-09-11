@@ -25,11 +25,13 @@ void read_posting_list(Inverted_index_ptr inverted_index, const char *file_name)
     char* input = fgets(line, MAX_LINE_LENGTH, input_file);
     while (input != NULL){
         if (strlen(line) != 0){
+            line[strcspn(line, "\n")] = 0;
             Array_list_ptr items = str_split(line, ' ');
             int* word_id = malloc(sizeof(int));
             *word_id = atoi(array_list_get(items, 0));
             free_array_list(items, NULL);
             fgets(line, MAX_LINE_LENGTH, input_file);
+            line[strcspn(line, "\n")] = 0;
             hash_map_insert(inverted_index->index, word_id, create_posting_list2(line));
         }
         input = fgets(line, MAX_LINE_LENGTH, input_file);

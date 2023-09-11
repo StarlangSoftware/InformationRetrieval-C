@@ -23,12 +23,15 @@ Dictionary_ptr create_term_dictionary2(const char *file_name) {
     char* input = fgets(line, MAX_LINE_LENGTH, input_file);
     while (input != NULL){
         if (strlen(line) != 0){
-            Array_list_ptr items = str_split(line, ' ');
-            int term_id = atoi(array_list_get(items, 0));
-            char* word = array_list_get(items, 1);
-            free_array_list(items, NULL);
+            line[strcspn(line, "\n")] = 0;
+            String_ptr first = substring(line, 0, str_find_c(line, " "));
+            String_ptr second = substring2(line, str_find_c(line, " ") + 1);
+            int term_id = atoi(first->s);
+            char* word = second->s;
             Term_ptr term = create_term(word, term_id);
             array_list_add(result->words, term);
+            free_string_ptr(first);
+            free_string_ptr(second);
         }
         input = fgets(line, MAX_LINE_LENGTH, input_file);
     }

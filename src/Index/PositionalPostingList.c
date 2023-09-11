@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <FileUtils.h>
 #include <Dictionary/Word.h>
+#include <string.h>
 #include "PositionalPostingList.h"
 #include "PositionalPosting.h"
 #include "Posting.h"
@@ -15,6 +16,7 @@ Positional_posting_list_ptr create_positional_posting_list(FILE *input_file, int
     result->postings = create_array_list();
     for (int i = 0; i < count; i++){
         fgets(line, MAX_LINE_LENGTH, input_file);
+        line[strcspn(line, "\n")] = 0;
         Array_list_ptr ids = split(line);
         int number_of_positional_postings = atoi(((String_ptr)array_list_get(ids, 1))->s);
         int doc_id = atoi(((String_ptr)array_list_get(ids, 0))->s);

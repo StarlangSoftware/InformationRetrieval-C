@@ -154,7 +154,7 @@ void test_attribute_query(){
     parameter->document_type = CATEGORICAL;
     parameter->indexes_from_file = true;
     Memory_collection_ptr collection = create_memory_collection("../../testCollection3", parameter);
-    test_attribute_single_query(collection, "Çift yönlü", 10);
+    test_attribute_single_query(collection, "Çift Yönlü", 10);
     test_attribute_single_query(collection, "Müzikli", 4);
     test_attribute_single_query(collection, "Çift Yönlü Alüminyum Bebek Arabası", 2);
 }

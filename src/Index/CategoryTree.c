@@ -38,7 +38,7 @@ void free_category_tree(Category_tree_ptr category_tree) {
 
 Array_list_ptr get_categories(Category_tree_ptr category_tree, Query_ptr query, Dictionary_ptr dictionary,
                               Category_determination_type category_determination_type) {
-    Array_list_ptr result;
+    Array_list_ptr result = create_array_list();
     switch (category_determination_type) {
         case KEYWORD:
             get_categories_with_keyword(category_tree->root, query, result);

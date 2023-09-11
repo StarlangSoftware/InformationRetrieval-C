@@ -64,6 +64,7 @@ void read_positional_posting_list(Positional_index_ptr positional_index, const c
     char* input = fgets(line, MAX_LINE_LENGTH, input_file);
     while (input != NULL){
         if (strlen(line) != 0){
+            line[strcspn(line, "\n")] = 0;
             Array_list_ptr items = str_split(line, ' ');
             int* word_id = malloc(sizeof(int));
             *word_id = atoi(array_list_get(items, 0));
