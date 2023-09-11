@@ -9,4 +9,4 @@ Video Lectures
 For Developers
 ============
 
-You can also see [Python](https://github.com/starlangsoftware/InformationRetrieval-Py), [Cython](https://github.com/starlangsoftware/InformationRetrieval-Cy), [Java](https://github.com/starlangsoftware/InformationRetrieval), [Js](https://github.com/starlangsoftware/InformationRetrieval-Js), or [C#](https://github.com/starlangsoftware/InformationRetrieval-CS) repository.
+You can also see [Python](https://github.com/starlangsoftware/InformationRetrieval-Py), [Cython](https://github.com/starlangsoftware/InformationRetrieval-Cy), [Java](https://github.com/starlangsoftware/InformationRetrieval), [Js](https://github.com/starlangsoftware/InformationRetrieval-Js), [C](https://github.com/starlangsoftware/InformationRetrieval-C), or [C#](https://github.com/starlangsoftware/InformationRetrieval-CS) repository.
