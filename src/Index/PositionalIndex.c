@@ -186,10 +186,9 @@ Query_result_ptr ranked_search(Positional_index_ptr positional_index, Query_ptr 
 int *get_term_frequencies(Positional_index_ptr positional_index, int doc_id) {
     int* tf = malloc(positional_index->positional_index->count * sizeof(int));
     int i = 0;
-    Array_list_ptr keys = key_list(positional_index->positional_index);
-    for (int j = 0; j < keys->size; j++){
-        int* item = array_list_get(keys, j);
-        Positional_posting_list_ptr positional_posting_list = hash_map_get(positional_index->positional_index, item);
+    Array_list_ptr values = value_list(positional_index->positional_index);
+    for (int j = 0; j < values->size; j++){
+        Positional_posting_list_ptr positional_posting_list = array_list_get(values, j);
         int index = get_index(positional_posting_list, doc_id);
         if (index != -1){
             tf[i] = size_of_positional_posting(get_positional_posting(positional_posting_list, index));
@@ -198,36 +197,35 @@ int *get_term_frequencies(Positional_index_ptr positional_index, int doc_id) {
         }
         i++;
     }
-    free_array_list(keys, NULL);
+    free_array_list(values, NULL);
     return tf;
 }
 
 int *get_document_frequencies(Positional_index_ptr positional_index) {
     int* df = malloc(positional_index->positional_index->count * sizeof(int));
     int i = 0;
-    Array_list_ptr keys = key_list(positional_index->positional_index);
-    for (int j = 0; j < keys->size; j++) {
-        int* item = array_list_get(keys, j);
-        Positional_posting_list_ptr positional_posting_list = hash_map_get(positional_index->positional_index, item);
+    Array_list_ptr values = value_list(positional_index->positional_index);
+    for (int j = 0; j < values->size; j++) {
+        Positional_posting_list_ptr positional_posting_list = array_list_get(values, j);
         df[i] = size_of_positional_posting_list(positional_posting_list);
         i++;
     }
-    free_array_list(keys, NULL);
+    free_array_list(values, NULL);
     return df;
 }
 
 int *get_document_sizes(Positional_index_ptr positional_index, int document_size) {
     int* sizes = malloc(document_size * sizeof(int));
-    Array_list_ptr keys = key_list(positional_index->positional_index);
-    for (int j = 0; j < keys->size; j++) {
-        int *item = array_list_get(keys, j);
-        Positional_posting_list_ptr positional_posting_list = hash_map_get(positional_index->positional_index, item);
+    Array_list_ptr values = value_list(positional_index->positional_index);
+    for (int j = 0; j < values->size; j++) {
+        Positional_posting_list_ptr positional_posting_list = array_list_get(values, j);
         for (int k = 0; k < size_of_positional_posting_list(positional_posting_list); k++){
             Positional_posting_ptr positional_posting = get_positional_posting(positional_posting_list, k);
             int doc_id = positional_posting->doc_id;
             sizes[doc_id] += size_of_positional_posting(positional_posting);
         }
     }
+    free_array_list(values, NULL);
     return sizes;
 }
 
@@ -243,4 +241,5 @@ void set_category_counts(Positional_index_ptr positional_index, Array_list_ptr d
             add_counts(document->category, *item, size_of_positional_posting(positional_posting));
         }
     }
+    free_array_list(keys, NULL);
 }
