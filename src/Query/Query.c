@@ -13,6 +13,7 @@ Query_ptr create_query(char *query) {
     for (int i = 0; i < terms->size; i++){
         array_list_add(result->terms, create_word(array_list_get(terms, i)));
     }
+    free_array_list(terms, free);
     return result;
 }
 

@@ -58,6 +58,7 @@ void load_categories(Memory_collection_ptr memory_collection) {
                 Document_ptr document = array_list_get(memory_collection->documents, doc_id);
                 set_category(document, memory_collection->category_tree, array_list_get(items, 1));
             }
+            free_array_list(items, free);
         }
         input = fgets(line, MAX_LINE_LENGTH, input_file);
     }

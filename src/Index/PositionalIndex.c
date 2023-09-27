@@ -70,7 +70,7 @@ void read_positional_posting_list(Positional_index_ptr positional_index, const c
             *word_id = atoi(array_list_get(items, 0));
             int count = atoi(array_list_get(items, 1));
             hash_map_insert(positional_index->positional_index, word_id, create_positional_posting_list(input_file, count));
-            free_array_list(items, NULL);
+            free_array_list(items, free);
         }
         input = fgets(line, MAX_LINE_LENGTH, input_file);
     }
