@@ -132,9 +132,7 @@ void auto_complete_word(Inverted_index_ptr inverted_index, Array_list_ptr word_l
         char* word = array_list_get(word_list, i);
         int word_index = get_word_index(dictionary, word);
         Posting_list_ptr posting_list = hash_map_get(inverted_index->index, &word_index);
-        int* count = malloc(sizeof(int));
-        *count = size_of_posting_list(posting_list);
-        array_list_add(counts, count);
+        array_list_add_int(counts, size_of_posting_list(posting_list));
     }
     for (int i = 0; i < word_list->size; i++) {
         int* count1 = array_list_get(counts, i);
