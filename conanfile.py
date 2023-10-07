@@ -1,7 +1,7 @@
 from conans import ConanFile, CMake, tools
 
 
-class DataStructureConan(ConanFile):
+class InformationRetrievalConan(ConanFile):
     name = "InformationRetrieval-C"
     version = "1.0.0"
     requires = "Corpus-C/1.0.0"
