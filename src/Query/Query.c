@@ -4,6 +4,8 @@
 
 #include <stdlib.h>
 #include <Dictionary/Word.h>
+#include <string.h>
+#include <RegularExpression.h>
 #include "Query.h"
 
 Query_ptr create_query(char *query) {
@@ -51,7 +53,24 @@ Query_ptr filter_attributes(Query_ptr query,
                 continue;
             }
             free_string_ptr(pair);
-            //regex
+            bool found = false;
+            for (int j = 0; j < 6; j++){
+                if (strcmp(shortcuts[j], ((Word_ptr) array_list_get(query->terms, i + 1))->name) == 0){
+                    found = true;
+                    break;
+                }
+            }
+            if (found){
+                Regular_expression_ptr re1 = create_regular_expression("[\\-\\+]?\\d+");
+                Regular_expression_ptr re2 = create_regular_expression("[\\+\\-]?\\d*\\.\\d*");
+                if (full_matches(re1, ((Word_ptr) array_list_get(query->terms, i))->name) || full_matches(re2, ((Word_ptr) array_list_get(query->terms, i))->name)){
+                    array_list_add(phrase_attributes->terms, create_word(pair->s));
+                    i += 2;
+                    continue;
+                }
+                free_regular_expression(re1);
+                free_regular_expression(re2);
+            }
         }
         if (hash_set_contains(attribute_list, ((Word_ptr) array_list_get(query->terms, i))->name)){
             array_list_add(term_attributes->terms, create_word(((Word_ptr) array_list_get(query->terms, i))->name));
