@@ -39,44 +39,44 @@ typedef Memory_collection *Memory_collection_ptr;
 
 void load_attribute_list(Memory_collection_ptr memory_collection);
 
-int collection_size(Memory_collection_ptr memory_collection);
+int collection_size(const Memory_collection* memory_collection);
 
-int vocabulary_size(Memory_collection_ptr memory_collection);
+int vocabulary_size(const Memory_collection* memory_collection);
 
 void load_categories(Memory_collection_ptr memory_collection);
 
 void construct_n_gram_index(Memory_collection_ptr memory_collection);
 
-Memory_collection_ptr create_memory_collection(char* directory, Parameter_ptr parameter);
+Memory_collection_ptr create_memory_collection(const char* directory, Parameter_ptr parameter);
 
-void read_documents(Memory_collection_ptr memory_collection, char* directory, Parameter_ptr parameter);
+void read_documents(Memory_collection_ptr memory_collection, const char* directory, const Parameter* parameter);
 
 void free_memory_collection(Memory_collection_ptr memory_collection);
 
-void load_indexes_from_file(Memory_collection_ptr memory_collection, char* directory);
+void load_indexes_from_file(Memory_collection_ptr memory_collection, const char* directory);
 
-Array_list_ptr construct_terms(Memory_collection_ptr memory_collection, Term_type term_type);
+Array_list_ptr construct_terms(const Memory_collection* memory_collection, Term_type term_type);
 
 void construct_indexes_in_memory(Memory_collection_ptr memory_collection);
 
-void save_memory_collection(Memory_collection_ptr memory_collection);
+void save_memory_collection(const Memory_collection* memory_collection);
 
-void save_categories(Memory_collection_ptr memory_collection);
+void save_categories(const Memory_collection* memory_collection);
 
-Query_result_ptr filter_according_to_categories(Memory_collection_ptr memory_collection,
-                                                Query_result_ptr current_result,
-                                                Array_list_ptr categories);
+Query_result_ptr filter_according_to_categories(const Memory_collection* memory_collection,
+                                                const Query_result* current_result,
+                                                const Array_list* categories);
 
-Query_result_ptr search_with_inverted_index(Memory_collection_ptr memory_collection,
+Query_result_ptr search_with_inverted_index(const Memory_collection* memory_collection,
                                             Query_ptr query,
-                                            Search_parameter_ptr parameter);
+                                            const Search_parameter* parameter);
 
-Query_result_ptr attribute_search(Memory_collection_ptr memory_collection,
+Query_result_ptr attribute_search(const Memory_collection* memory_collection,
                                   Query_ptr query,
-                                  Search_parameter_ptr parameter);
+                                  const Search_parameter* parameter);
 
-Query_result_ptr search_collection(Memory_collection_ptr memory_collection,
+Query_result_ptr search_collection(const Memory_collection* memory_collection,
                                    Query_ptr query,
-                                   Search_parameter_ptr search_parameter);
+                                   const Search_parameter* search_parameter);
 
 #endif //INFORMATIONRETRIEVAL_MEMORYCOLLECTION_H

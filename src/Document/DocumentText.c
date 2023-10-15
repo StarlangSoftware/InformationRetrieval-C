@@ -6,7 +6,7 @@
 #include "DocumentText.h"
 #include "../Index/TermOccurrence.h"
 
-Hash_set_ptr construct_distinct_word_list(Corpus_ptr corpus, Term_type term_type) {
+Hash_set_ptr construct_distinct_word_list(const Corpus* corpus, Term_type term_type) {
     Hash_set_ptr words = create_hash_set((unsigned int (*)(const void *, int)) hash_function_string,
                                          (int (*)(const void *, const void *)) compare_string);
     for (int i = 0; i < corpus_sentence_count(corpus); i++){
@@ -28,7 +28,7 @@ Hash_set_ptr construct_distinct_word_list(Corpus_ptr corpus, Term_type term_type
     return words;
 }
 
-Array_list_ptr construct_term_list(Corpus_ptr corpus, int doc_id, Term_type term_type){
+Array_list_ptr construct_term_list(const Corpus* corpus, int doc_id, Term_type term_type){
     Array_list_ptr terms = create_array_list();
     int size = 0;
     for (int i = 0; i < corpus_sentence_count(corpus); i++){

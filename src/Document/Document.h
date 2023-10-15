@@ -23,7 +23,10 @@ typedef struct document Document;
 
 typedef Document* Document_ptr;
 
-Document_ptr create_document(Document_type documentType, const char* absolute_file_name, const char* file_name, int doc_id);
+Document_ptr create_document(Document_type documentType,
+                             const char* absolute_file_name,
+                             const char* file_name,
+                             int doc_id);
 
 void free_document(Document_ptr document);
 

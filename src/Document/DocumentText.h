@@ -9,8 +9,8 @@
 #include <Corpus.h>
 #include "../Index/TermType.h"
 
-Hash_set_ptr construct_distinct_word_list(Corpus_ptr corpus, Term_type term_type);
+Hash_set_ptr construct_distinct_word_list(const Corpus* corpus, Term_type term_type);
 
-Array_list_ptr construct_term_list(Corpus_ptr corpus, int doc_id, Term_type term_type);
+Array_list_ptr construct_term_list(const Corpus* corpus, int doc_id, Term_type term_type);
 
 #endif //INFORMATIONRETRIEVAL_DOCUMENTTEXT_H

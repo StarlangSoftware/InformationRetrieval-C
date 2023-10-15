@@ -34,11 +34,11 @@ void load_attribute_list(Memory_collection_ptr memory_collection) {
     fclose(input_file);
 }
 
-int collection_size(Memory_collection_ptr memory_collection) {
+int collection_size(const Memory_collection* memory_collection) {
     return memory_collection->documents->size;
 }
 
-int vocabulary_size(Memory_collection_ptr memory_collection) {
+int vocabulary_size(const Memory_collection* memory_collection) {
     return memory_collection->dictionary->words->size;
 }
 
@@ -76,7 +76,7 @@ void construct_n_gram_index(Memory_collection_ptr memory_collection) {
     free_array_list(terms, (void (*)(void *)) free_term_occurrence);
 }
 
-Memory_collection_ptr create_memory_collection(char *directory_name, Parameter_ptr parameter) {
+Memory_collection_ptr create_memory_collection(const char *directory_name, Parameter_ptr parameter) {
     Memory_collection_ptr result = malloc(sizeof(Memory_collection));
     result->parameter = parameter;
     result->name = str_copy(result->name, directory_name);
@@ -100,7 +100,7 @@ Memory_collection_ptr create_memory_collection(char *directory_name, Parameter_p
     return result;
 }
 
-void read_documents(Memory_collection_ptr memory_collection, char *directory_name, Parameter_ptr parameter) {
+void read_documents(Memory_collection_ptr memory_collection, const char *directory_name, const Parameter* parameter) {
     int j = 0;
     DIR *directory = opendir(directory_name);
     struct dirent *directory_entry;
@@ -155,7 +155,7 @@ void free_memory_collection(Memory_collection_ptr memory_collection) {
     free(memory_collection);
 }
 
-void load_indexes_from_file(Memory_collection_ptr memory_collection, char *directory) {
+void load_indexes_from_file(Memory_collection_ptr memory_collection, const char *directory) {
     memory_collection->dictionary = create_term_dictionary2(directory);
     memory_collection->inverted_index = create_inverted_index(directory);
     if (memory_collection->parameter->positional_index){
@@ -200,7 +200,7 @@ void load_indexes_from_file(Memory_collection_ptr memory_collection, char *direc
     }
 }
 
-Array_list_ptr construct_terms(Memory_collection_ptr memory_collection, Term_type term_type) {
+Array_list_ptr construct_terms(const Memory_collection* memory_collection, Term_type term_type) {
     Array_list_ptr terms = create_array_list();
     Array_list_ptr doc_terms;
     for (int i = 0; i < memory_collection->documents->size; i++){
@@ -264,7 +264,7 @@ void construct_indexes_in_memory(Memory_collection_ptr memory_collection) {
     }
 }
 
-void save_categories(Memory_collection_ptr memory_collection) {
+void save_categories(const Memory_collection* memory_collection) {
     FILE *output_file;
     char name[MAX_LINE_LENGTH];
     sprintf(name, "%s-categories.txt", memory_collection->name);
@@ -278,7 +278,7 @@ void save_categories(Memory_collection_ptr memory_collection) {
     fclose(output_file);
 }
 
-void save_memory_collection(Memory_collection_ptr memory_collection) {
+void save_memory_collection(const Memory_collection* memory_collection) {
     if (memory_collection->index_type == INVERTED_INDEX){
         save_term_dictionary(memory_collection->dictionary, memory_collection->name);
         save_inverted_index(memory_collection->inverted_index, memory_collection->name);
@@ -310,8 +310,8 @@ void save_memory_collection(Memory_collection_ptr memory_collection) {
 }
 
 Query_result_ptr
-filter_according_to_categories(Memory_collection_ptr memory_collection, Query_result_ptr current_result,
-                               Array_list_ptr categories) {
+filter_according_to_categories(const Memory_collection* memory_collection, const Query_result* current_result,
+                               const Array_list* categories) {
     Query_result_ptr filtered_result = create_query_result();
     Array_list_ptr items = current_result->items;
     for (int i = 0; i < items->size; i++){
@@ -330,7 +330,7 @@ filter_according_to_categories(Memory_collection_ptr memory_collection, Query_re
 }
 
 Query_result_ptr
-search_with_inverted_index(Memory_collection_ptr memory_collection, Query_ptr query, Search_parameter_ptr parameter) {
+search_with_inverted_index(const Memory_collection* memory_collection, Query_ptr query, const Search_parameter* parameter) {
     Query_result_ptr result;
     switch (parameter->retrieval_type) {
         case BOOLEAN:
@@ -350,7 +350,7 @@ search_with_inverted_index(Memory_collection_ptr memory_collection, Query_ptr qu
 }
 
 Query_result_ptr
-attribute_search(Memory_collection_ptr memory_collection, Query_ptr query, Search_parameter_ptr parameter) {
+attribute_search(const Memory_collection* memory_collection, Query_ptr query, const Search_parameter* parameter) {
     Query_ptr term_attributes = create_query2();
     Query_ptr phrase_attributes = create_query2();
     Query_result_ptr term_result = create_query_result();
@@ -397,7 +397,7 @@ attribute_search(Memory_collection_ptr memory_collection, Query_ptr query, Searc
 }
 
 Query_result_ptr
-search_collection(Memory_collection_ptr memory_collection, Query_ptr query, Search_parameter_ptr search_parameter) {
+search_collection(const Memory_collection* memory_collection, Query_ptr query, const Search_parameter* search_parameter) {
     Query_result_ptr current_result;
     if (search_parameter->focus_type == CATEGORY){
         if (search_parameter->search_attributes){
