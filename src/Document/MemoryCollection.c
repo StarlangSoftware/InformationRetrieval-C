@@ -14,24 +14,17 @@
 
 void load_attribute_list(Memory_collection_ptr memory_collection) {
     char name[MAX_LINE_LENGTH];
-    char line[MAX_LINE_LENGTH];
     memory_collection->attribute_list = create_hash_set((unsigned int (*)(const void *, int)) hash_function_string,
                                                         (int (*)(const void *, const void *)) compare_string);
     sprintf(name, "%s-attributelist.txt", memory_collection->name);
-    FILE* input_file = fopen(name, "r");
-    if (input_file == NULL){
-        return;
-    }
-    char* input = fgets(line, MAX_LINE_LENGTH, input_file);
-    while (input != NULL){
+    Array_list_ptr lines = read_lines(name);
+    for (int i = 0; i < lines->size; i++){
+        char* line = array_list_get(lines, i);
         if (strlen(line) != 0){
-            line[strcspn(line, "\n")] = 0;
-            char* attribute = str_copy(attribute, line);
-            hash_set_insert(memory_collection->attribute_list, attribute);
+            hash_set_insert(memory_collection->attribute_list, line);
         }
-        input = fgets(line, MAX_LINE_LENGTH, input_file);
     }
-    fclose(input_file);
+    free_array_list(lines, NULL);
 }
 
 int collection_size(const Memory_collection* memory_collection) {
@@ -44,14 +37,12 @@ int vocabulary_size(const Memory_collection* memory_collection) {
 
 void load_categories(Memory_collection_ptr memory_collection) {
     char name[MAX_LINE_LENGTH];
-    char line[MAX_LINE_LENGTH];
     memory_collection->category_tree = create_category_tree(memory_collection->name);
     sprintf(name, "%s-categories.txt", memory_collection->name);
-    FILE* input_file = fopen(name, "r");
-    char* input = fgets(line, MAX_LINE_LENGTH, input_file);
-    while (input != NULL){
+    Array_list_ptr lines = read_lines(name);
+    for (int i = 0; i < lines->size; i++){
+        char* line = array_list_get(lines, i);
         if (strlen(line) != 0){
-            line[strcspn(line, "\n")] = 0;
             Array_list_ptr items = str_split(line, '\t');
             int doc_id = atoi(array_list_get(items, 0));
             if (items->size > 1){
@@ -60,9 +51,8 @@ void load_categories(Memory_collection_ptr memory_collection) {
             }
             free_array_list(items, free);
         }
-        input = fgets(line, MAX_LINE_LENGTH, input_file);
     }
-    fclose(input_file);
+    free_array_list(lines, free);
 }
 
 void construct_n_gram_index(Memory_collection_ptr memory_collection) {

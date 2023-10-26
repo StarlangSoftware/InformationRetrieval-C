@@ -19,24 +19,21 @@ Inverted_index_ptr create_inverted_index(const char *file_name) {
 
 void read_posting_list(Inverted_index_ptr inverted_index, const char *file_name) {
     char name[MAX_LINE_LENGTH];
-    char line[MAX_LINE_LENGTH];
     sprintf(name, "%s-postings.txt", file_name);
-    FILE* input_file = fopen(name, "r");
-    char* input = fgets(line, MAX_LINE_LENGTH, input_file);
-    while (input != NULL){
+    Array_list_ptr lines = read_lines(name);
+    for (int i = 0; i < lines->size; i++){
+        char* line = array_list_get(lines, i);
         if (strlen(line) != 0){
-            line[strcspn(line, "\n")] = 0;
             Array_list_ptr items = str_split(line, ' ');
             int* word_id = malloc(sizeof(int));
             *word_id = atoi(array_list_get(items, 0));
             free_array_list(items, free);
-            fgets(line, MAX_LINE_LENGTH, input_file);
-            line[strcspn(line, "\n")] = 0;
+            i++;
+            line = array_list_get(lines, i);
             hash_map_insert(inverted_index->index, word_id, create_posting_list2(line));
         }
-        input = fgets(line, MAX_LINE_LENGTH, input_file);
     }
-    fclose(input_file);
+    free_array_list(lines, free);
 }
 
 void free_inverted_index(Inverted_index_ptr inverted_index) {
