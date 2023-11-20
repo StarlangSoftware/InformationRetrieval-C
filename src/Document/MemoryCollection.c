@@ -14,17 +14,8 @@
 
 void load_attribute_list(Memory_collection_ptr memory_collection) {
     char name[MAX_LINE_LENGTH];
-    memory_collection->attribute_list = create_hash_set((unsigned int (*)(const void *, int)) hash_function_string,
-                                                        (int (*)(const void *, const void *)) compare_string);
     sprintf(name, "%s-attributelist.txt", memory_collection->name);
-    Array_list_ptr lines = read_lines(name);
-    for (int i = 0; i < lines->size; i++){
-        char* line = array_list_get(lines, i);
-        if (strlen(line) != 0){
-            hash_set_insert(memory_collection->attribute_list, line);
-        }
-    }
-    free_array_list(lines, NULL);
+    memory_collection->attribute_list = read_hash_set(name);
 }
 
 int collection_size(const Memory_collection* memory_collection) {
