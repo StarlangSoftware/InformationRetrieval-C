@@ -10,6 +10,7 @@
 #include "PositionalPostingList.h"
 #include "../Query/VectorSpaceModel.h"
 #include "../Document/Document.h"
+#include "TermDictionary.h"
 
 Positional_index_ptr create_positional_index(const char *file_name) {
     Positional_index_ptr result = malloc(sizeof(Positional_index));
@@ -25,12 +26,12 @@ Positional_index_ptr create_positional_index2(Dictionary_ptr dictionary, Array_l
         Term_occurrence_ptr term = array_list_get(terms, 0);
         int i = 1;
         Term_occurrence_ptr previous_term = term;
-        int term_id = get_word_index(dictionary, term->term->name);
+        int term_id = get_term_dictionary_word_index(dictionary, term->term);
         add_position_to_positional_index(result, term_id, term->doc_id, term->position);
         int prev_doc_id = term->doc_id;
         while (i < terms->size){
             term = array_list_get(terms, i);
-            term_id = get_word_index(dictionary, term->term->name);
+            term_id = get_term_dictionary_word_index(dictionary, term->term);
             if (term_id != -1){
                 if (is_different(term, previous_term)){
                     add_position_to_positional_index(result, term_id, term->doc_id, term->position);
@@ -108,7 +109,7 @@ void save_positional_index(Positional_index_ptr positional_index, char *file_nam
 Query_result_ptr positional_search(Positional_index_ptr positional_index, Query_ptr query, Dictionary_ptr dictionary) {
     Positional_posting_list_ptr posting_result = NULL;
     for (int i = 0; i < size_of_query(query); i++){
-        int term = get_word_index(dictionary, get_term(query, i)->name);
+        int term = get_term_dictionary_word_index(dictionary, get_term(query, i));
         if (term != -1){
             if (i == 0){
                 posting_result = clone_positional_posting_list(hash_map_get(positional_index->positional_index, &term));
@@ -141,7 +142,7 @@ Query_result_ptr ranked_search(Positional_index_ptr positional_index, Query_ptr 
     Query_result_ptr result = create_query_result();
     Positional_posting_list_ptr positional_posting_list;
     for (int i = 0; i < size_of_query(query); i++) {
-        int term = get_word_index(dictionary, get_term(query, i)->name);
+        int term = get_term_dictionary_word_index(dictionary, get_term(query, i));
         if (term != -1) {
             positional_posting_list = hash_map_get(positional_index->positional_index, &term);
             for (int j = 0; j < size_of_positional_posting_list(positional_posting_list); j++){

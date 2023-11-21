@@ -9,6 +9,7 @@
 #include "InvertedIndex.h"
 #include "PostingList.h"
 #include "TermOccurrence.h"
+#include "TermDictionary.h"
 
 Inverted_index_ptr create_inverted_index(const char *file_name) {
     Inverted_index_ptr result = malloc(sizeof(Inverted_index));
@@ -48,12 +49,12 @@ Inverted_index_ptr create_inverted_index2(Dictionary_ptr dictionary, Array_list_
         Term_occurrence_ptr term = array_list_get(terms, 0);
         int i = 1;
         Term_occurrence_ptr previous_term = term;
-        int term_id = get_word_index(dictionary, term->term->name);
+        int term_id = get_term_dictionary_word_index(dictionary, term->term);
         add_term_to_inverted_index(result, term_id, term->doc_id);
         int prev_doc_id = term->doc_id;
         while (i < terms->size){
             term = array_list_get(terms, i);
-            term_id = get_word_index(dictionary, term->term->name);
+            term_id = get_term_dictionary_word_index(dictionary, term->term);
             if (term_id != -1){
                 if (is_different(term, previous_term)){
                     add_term_to_inverted_index(result, term_id, term->doc_id);
@@ -103,7 +104,7 @@ void save_inverted_index(Inverted_index_ptr inverted_index, char *file_name) {
 Query_result_ptr search_inverted_index(Inverted_index_ptr inverted_index, Query_ptr query, Dictionary_ptr dictionary) {
     Array_list_ptr query_terms = create_array_list();
     for (int i = 0; i < size_of_query(query); i++){
-        int term_index = get_word_index(dictionary, get_term(query, i)->name);
+        int term_index = get_term_dictionary_word_index(dictionary, get_term(query, i));
         if (term_index != -1){
             array_list_add(query_terms, hash_map_get(inverted_index->index, &term_index));
         } else {
@@ -127,7 +128,7 @@ void auto_complete_word(Inverted_index_ptr inverted_index, Array_list_ptr word_l
     Array_list_ptr counts = create_array_list();
     for (int i = 0; i < word_list->size; i++){
         char* word = array_list_get(word_list, i);
-        int word_index = get_word_index(dictionary, word);
+        int word_index = get_term_dictionary_word_index(dictionary, word);
         Posting_list_ptr posting_list = hash_map_get(inverted_index->index, &word_index);
         array_list_add_int(counts, size_of_posting_list(posting_list));
     }

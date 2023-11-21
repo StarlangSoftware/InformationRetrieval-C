@@ -18,4 +18,6 @@ Term_ptr create_term(const char* name, int term_id);
 
 void free_term(Term_ptr term);
 
+int compare_term(const Term *term1, const Term *term2);
+
 #endif //INFORMATIONRETRIEVAL_TERM_H

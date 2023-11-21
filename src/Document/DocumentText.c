@@ -14,11 +14,11 @@ Hash_set_ptr construct_distinct_word_list(const Corpus* corpus, Term_type term_t
         for (int j = 0; j < sentence_word_count(sentence); j++){
             switch (term_type) {
                 case TOKEN:
-                    hash_set_insert(words, sentence_get_word(sentence, j)->name);
+                    hash_set_insert(words, sentence_get_word(sentence, j));
                     break;
                 case PHRASE:
                     if (j < sentence_word_count(sentence) - 1){
-                        String_ptr st = create_string4(sentence_get_word(sentence, j)->name, " ", sentence_get_word(sentence, j + 1)->name);
+                        String_ptr st = create_string4(sentence_get_word(sentence, j), " ", sentence_get_word(sentence, j + 1));
                         hash_set_insert(words, st->s);
                         free(st);
                     }
@@ -41,8 +41,9 @@ Array_list_ptr construct_term_list(const Corpus* corpus, int doc_id, Term_type t
                     break;
                 case PHRASE:
                     if (j < sentence_word_count(sentence) - 1){
-                        String_ptr st = create_string4(sentence_get_word(sentence, j)->name, " ", sentence_get_word(sentence, j + 1)->name);
-                        array_list_add(terms, create_term_occurrence(create_word(st->s), doc_id, size));
+                        String_ptr st = create_string4(sentence_get_word(sentence, j), " ", sentence_get_word(sentence, j + 1));
+                        char* tmp = str_copy(tmp, st->s);
+                        array_list_add(terms, create_term_occurrence(tmp, doc_id, size));
                         free_string_ptr(st);
                         size++;
                     }

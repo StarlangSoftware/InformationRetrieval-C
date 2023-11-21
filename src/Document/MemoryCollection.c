@@ -191,7 +191,7 @@ Array_list_ptr construct_terms(const Memory_collection* memory_collection, Term_
         array_list_add_all(terms, doc_terms);
         free_array_list(doc_terms, NULL);
     }
-    array_list_sort(terms, (int (*)(const void *, const void *)) compare_term_occurrence2);
+    array_list_sort(terms, (int (*)(const void *, const void *)) compare_term_occurrence);
     return terms;
 }
 

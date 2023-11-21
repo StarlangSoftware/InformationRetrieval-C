@@ -110,8 +110,8 @@ void set_representative_count_node(Category_node_ptr category_node, int represen
 void get_categories_with_keyword(Category_node_ptr category_node, Query_ptr query, Array_list_ptr result) {
     double category_score = 0;
     for (int i = 0; i < size_of_query(query); i++){
-        Word_ptr word = array_list_get(query->terms, i);
-        int index = array_list_index_of(category_node->category_words, word->name,
+        char* word = array_list_get(query->terms, i);
+        int index = array_list_index_of(category_node->category_words, word,
                             (int (*)(const void *, const void *)) compare_string);
         if (index != -1){
             category_score++;
@@ -130,8 +130,8 @@ void get_categories_with_cosine(Category_node_ptr category_node, Query_ptr query
                                 Array_list_ptr result) {
     double category_score = 0;
     for (int i = 0; i < size_of_query(query); i++){
-        Word_ptr word = array_list_get(query->terms, i);
-        Term_ptr term = get_word_term(dictionary, word->name);
+        char* word = array_list_get(query->terms, i);
+        Term_ptr term = get_word_term(dictionary, word);
         if (term != NULL){
             category_score += count_counter_hash_map(category_node->counts, &(term->term_id));
         }

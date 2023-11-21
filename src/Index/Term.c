@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <StringUtils.h>
+#include <HashMap/HashMap.h>
 #include "Term.h"
 
 Term_ptr create_term(const char *name, int term_id) {
@@ -17,3 +18,8 @@ void free_term(Term_ptr term) {
     free(term->name);
     free(term);
 }
+
+int compare_term(const Term *term1, const Term *term2) {
+    return compare_string(term1->name, term2->name);
+}
+

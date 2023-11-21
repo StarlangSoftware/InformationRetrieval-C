@@ -49,26 +49,34 @@ void update_word_map_term_dictionary(Dictionary_ptr dictionary) {
     }
 }
 
+int get_term_dictionary_word_index(const Dictionary* dictionary, const char *name) {
+    if (hash_map_contains(dictionary->word_map, name)) {
+        return *(int *) (hash_map_get(dictionary->word_map, name));
+    } else {
+        return -1;
+    }
+}
+
 Dictionary_ptr create_term_dictionary3(Array_list_ptr terms) {
     Dictionary_ptr result = create_term_dictionary();
     int term_id = 0;
     if (!is_array_list_empty(terms)){
         Term_occurrence_ptr term = array_list_get(terms, 0);
-        add_term(result, term->term->name, term_id);
+        add_term(result, term->term, term_id);
         term_id++;
         Term_occurrence_ptr previous_term = term;
         int i = 1;
         while (i < terms->size){
             term = array_list_get(terms, i);
             if (is_different(term, previous_term)){
-                add_term(result, term->term->name, term_id);
+                add_term(result, term->term, term_id);
                 term_id++;
             }
             i++;
             previous_term = term;
         }
     }
-    sort(result);
+    sort_term_dictionary(result);
     return result;
 }
 
@@ -82,8 +90,8 @@ Dictionary_ptr create_term_dictionary4(Hash_set_ptr words) {
         add_term(result, name, term_id);
         term_id++;
     }
-    free_array_list(word_list, (void (*)(void *)) free_word);
-    sort(result);
+    free_array_list(word_list, (void (*)(void *)) free);
+    sort_term_dictionary(result);
     return result;
 }
 
@@ -150,7 +158,8 @@ Array_list_ptr construct_n_grams(const char *word, int term_id, int k) {
                     free_string_ptr(s);
                 }
             }
-            array_list_add(n_grams, create_term_occurrence(create_word(term), term_id, l));
+            char* tmp = str_copy(tmp, term);
+            array_list_add(n_grams, create_term_occurrence(tmp, term_id, l));
         }
     }
     return n_grams;
@@ -164,11 +173,11 @@ Array_list_ptr construct_terms_from_dictionary(const Dictionary *dictionary, int
         Array_list_ptr term_list = construct_n_grams(word, i, k);
         array_list_add_all(terms, term_list);
     }
-    array_list_sort(terms, (int (*)(const void *, const void *)) compare_term_occurrence2);
+    array_list_sort(terms, (int (*)(const void *, const void *)) compare_term_occurrence);
     return terms;
 }
 
 void sort_term_dictionary(Dictionary_ptr dictionary) {
-    array_list_sort(dictionary->words, (int (*)(const void *, const void *)) compare_term_occurrence);
+    array_list_sort(dictionary->words, (int (*)(const void *, const void *)) compare_term);
     update_word_map_term_dictionary(dictionary);
 }

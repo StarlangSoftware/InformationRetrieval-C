@@ -30,4 +30,8 @@ Array_list_ptr construct_terms_from_dictionary(const Dictionary* dictionary, int
 
 Term_ptr get_word_term(const Dictionary* dictionary, const char *name);
 
+int get_term_dictionary_word_index(const Dictionary* dictionary, const char *name);
+
+void sort_term_dictionary(Dictionary_ptr dictionary);
+
 #endif //INFORMATIONRETRIEVAL_TERMDICTIONARY_H

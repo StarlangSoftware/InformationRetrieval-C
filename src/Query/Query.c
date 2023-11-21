@@ -13,9 +13,9 @@ Query_ptr create_query(char *query) {
     result->terms = create_array_list();
     Array_list_ptr terms = str_split(query, ' ');
     for (int i = 0; i < terms->size; i++){
-        array_list_add(result->terms, create_word(array_list_get(terms, i)));
+        array_list_add(result->terms, array_list_get(terms, i));
     }
-    free_array_list(terms, free);
+    free_array_list(terms, NULL);
     return result;
 }
 
@@ -26,11 +26,11 @@ Query_ptr create_query2() {
 }
 
 void free_query(Query_ptr query) {
-    free_array_list(query->terms, (void (*)(void *)) free_word);
+    free_array_list(query->terms, (void (*)(void *)) free);
     free(query);
 }
 
-Word_ptr get_term(Query_ptr query, int index) {
+char* get_term(Query_ptr query, int index) {
     return array_list_get(query->terms, index);
 }
 
@@ -46,16 +46,17 @@ Query_ptr filter_attributes(Query_ptr query,
     Query_ptr filtered_query = create_query2();
     while (i < query->terms->size){
         if (i < query->terms->size - 1){
-            String_ptr pair = create_string4(((Word_ptr) array_list_get(query->terms, i))->name, " ", ((Word_ptr) array_list_get(query->terms, i + 1))->name);
+            String_ptr pair = create_string4(array_list_get(query->terms, i), " ", array_list_get(query->terms, i + 1));
             if (hash_set_contains(attribute_list, pair->s)){
-                array_list_add(phrase_attributes->terms, create_word(pair->s));
+                char* tmp = str_copy(tmp, pair->s);
+                array_list_add(phrase_attributes->terms, tmp);
                 i += 2;
                 continue;
             }
             free_string_ptr(pair);
             bool found = false;
             for (int j = 0; j < 6; j++){
-                if (strcmp(shortcuts[j], ((Word_ptr) array_list_get(query->terms, i + 1))->name) == 0){
+                if (strcmp(shortcuts[j], array_list_get(query->terms, i + 1)) == 0){
                     found = true;
                     break;
                 }
@@ -63,8 +64,9 @@ Query_ptr filter_attributes(Query_ptr query,
             if (found){
                 Regular_expression_ptr re1 = create_regular_expression("[\\-\\+]?\\d+");
                 Regular_expression_ptr re2 = create_regular_expression("[\\+\\-]?\\d*\\.\\d*");
-                if (full_matches(re1, ((Word_ptr) array_list_get(query->terms, i))->name) || full_matches(re2, ((Word_ptr) array_list_get(query->terms, i))->name)){
-                    array_list_add(phrase_attributes->terms, create_word(pair->s));
+                if (full_matches(re1, array_list_get(query->terms, i)) || full_matches(re2, array_list_get(query->terms, i))){
+                    char* tmp = str_copy(tmp, pair->s);
+                    array_list_add(phrase_attributes->terms, tmp);
                     i += 2;
                     continue;
                 }
@@ -72,10 +74,11 @@ Query_ptr filter_attributes(Query_ptr query,
                 free_regular_expression(re2);
             }
         }
-        if (hash_set_contains(attribute_list, ((Word_ptr) array_list_get(query->terms, i))->name)){
-            array_list_add(term_attributes->terms, create_word(((Word_ptr) array_list_get(query->terms, i))->name));
+        char* tmp = str_copy(tmp, array_list_get(query->terms, i));
+        if (hash_set_contains(attribute_list, tmp)){
+            array_list_add(term_attributes->terms, tmp);
         } else {
-            array_list_add(filtered_query->terms, create_word(((Word_ptr) array_list_get(query->terms, i))->name));
+            array_list_add(filtered_query->terms, tmp);
         }
         i++;
     }

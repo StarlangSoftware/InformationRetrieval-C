@@ -30,7 +30,7 @@ Query_ptr create_query2();
 
 void free_query(Query_ptr query);
 
-Word_ptr get_term(Query_ptr query, int index);
+char* get_term(Query_ptr query, int index);
 
 int size_of_query(Query_ptr query);
 

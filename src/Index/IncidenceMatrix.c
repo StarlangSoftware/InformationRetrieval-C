@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include "IncidenceMatrix.h"
 #include "TermOccurrence.h"
+#include "TermDictionary.h"
 
 Incidence_matrix_ptr create_incidence_matrix(int dictionary_size, int document_size) {
     Incidence_matrix_ptr result = malloc(sizeof(Incidence_matrix));
@@ -25,11 +26,11 @@ Incidence_matrix_ptr create_incidence_matrix2(Array_list_ptr terms, Dictionary_p
     if (terms->size > 0){
         Term_occurrence_ptr term = array_list_get(terms, 0);
         int i = 1;
-        int term_index = get_word_index(dictionary, term->term->name);
+        int term_index = get_term_dictionary_word_index(dictionary, term->term);
         set(result, term_index, term->doc_id);
         while (i < terms->size){
             term = array_list_get(terms, i);
-            term_index = get_word_index(dictionary, term->term->name);
+            term_index = get_term_dictionary_word_index(dictionary, term->term);
             set(result, term_index, term->doc_id);
             i++;
         }
@@ -56,7 +57,7 @@ Query_result_ptr search_incidence_matrix(Incidence_matrix_ptr incidence_matrix, 
         result_row[i] = true;
     }
     for (int i = 0; i < size_of_query(query); i++){
-        int term_index = get_word_index(dictionary, get_term(query, i)->name);
+        int term_index = get_term_dictionary_word_index(dictionary, get_term(query, i));
         if (term_index != -1){
             for (int j = 0; j < incidence_matrix->document_size; j++){
                 result_row[j] = result_row[j] && incidence_matrix->incidence_matrix[term_index][j];
