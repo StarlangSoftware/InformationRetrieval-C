@@ -4,10 +4,11 @@
 
 #include <stdlib.h>
 #include <Dictionary/Word.h>
+#include <Memory/Memory.h>
 #include "CategoryTree.h"
 
 Category_tree_ptr create_category_tree(char *root_name) {
-    Category_tree_ptr result = malloc(sizeof(Category_tree));
+    Category_tree_ptr result = malloc_(sizeof(Category_tree), "create_category_tree");
     result->root = create_category_node(root_name, NULL);
     return result;
 }
@@ -33,7 +34,7 @@ void set_representative_count_tree(Category_tree_ptr category_tree, int represen
 
 void free_category_tree(Category_tree_ptr category_tree) {
     free_category_node(category_tree->root);
-    free(category_tree);
+    free_(category_tree);
 }
 
 Array_list_ptr get_categories(Category_tree_ptr category_tree, Query_ptr query, Dictionary_ptr dictionary,

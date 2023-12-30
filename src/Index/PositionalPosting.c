@@ -2,21 +2,21 @@
 // Created by Olcay Taner YILDIZ on 29.08.2023.
 //
 
-#include <stdlib.h>
 #include <FileUtils.h>
 #include <StringUtils.h>
+#include <Memory/Memory.h>
 #include "PositionalPosting.h"
 #include "Posting.h"
 
 Positional_posting_ptr create_positional_posting(int doc_id) {
-    Positional_posting_ptr result = malloc(sizeof(Positional_posting));
+    Positional_posting_ptr result = malloc_(sizeof(Positional_posting), "create_positional_posting");
     result->positions = create_array_list();
     result->doc_id = doc_id;
     return result;
 }
 
 Positional_posting_ptr clone_positional_posting(Positional_posting_ptr positional_posting) {
-    Positional_posting_ptr result = malloc(sizeof(Positional_posting));
+    Positional_posting_ptr result = malloc_(sizeof(Positional_posting), "clone_positional_posting");
     result->positions = create_array_list();
     for (int i = 0; i < positional_posting->positions->size; i++){
         Posting_ptr posting = array_list_get(positional_posting->positions, i);
@@ -28,7 +28,7 @@ Positional_posting_ptr clone_positional_posting(Positional_posting_ptr positiona
 
 void free_positional_posting(Positional_posting_ptr positional_posting) {
     free_array_list(positional_posting->positions, (void (*)(void *)) free_posting);
-    free(positional_posting);
+    free_(positional_posting);
 }
 
 void add_position(Positional_posting_ptr positional_posting, int position) {

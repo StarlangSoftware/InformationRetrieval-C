@@ -6,28 +6,30 @@
 #include <Dictionary/Word.h>
 #include <FileUtils.h>
 #include <string.h>
+#include <Memory/Memory.h>
 #include "PostingList.h"
 #include "Posting.h"
 
 Posting_list_ptr create_posting_list() {
-    Posting_list_ptr result = malloc(sizeof(Posting_list));
+    Posting_list_ptr result = malloc_(sizeof(Posting_list), "create_posting_list");
     result->postings = create_array_list();
     return result;
 }
 
 Posting_list_ptr create_posting_list2(char *line) {
-    Posting_list_ptr result = malloc(sizeof(Posting_list));
+    Posting_list_ptr result = malloc_(sizeof(Posting_list), "create_posting_list2");
     result->postings = create_array_list();
     Array_list_ptr ids = split(line);
     for (int i = 0; i < ids->size; i++){
         String_ptr id = array_list_get(ids, i);
         add_to_posting_list(result, atoi(id->s));
     }
+    free_array_list(ids, (void (*)(void *)) free_string_ptr);
     return result;
 }
 
 Posting_list_ptr clone_posting_list(Posting_list_ptr posting_list) {
-    Posting_list_ptr result = malloc(sizeof(Posting_list));
+    Posting_list_ptr result = malloc_(sizeof(Posting_list), "clone_posting_list");
     result->postings = create_array_list();
     for (int i = 0; i < posting_list->postings->size; i++){
         Posting_ptr posting = array_list_get(posting_list->postings, i);
@@ -92,7 +94,7 @@ void posting_list_write_to_file(const Posting_list *posting_list, FILE *output_f
 
 void free_posting_list(Posting_list_ptr posting_list) {
     free_array_list(posting_list->postings, (void (*)(void *)) free_posting);
-    free(posting_list);
+    free_(posting_list);
 }
 
 int compare_posting_list(const Posting_list *first, const Posting_list *second) {

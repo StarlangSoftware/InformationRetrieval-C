@@ -6,13 +6,14 @@
 #include <FileUtils.h>
 #include <string.h>
 #include <StringUtils.h>
+#include <Memory/Memory.h>
 #include "InvertedIndex.h"
 #include "PostingList.h"
 #include "TermOccurrence.h"
 #include "TermDictionary.h"
 
 Inverted_index_ptr create_inverted_index(const char *file_name) {
-    Inverted_index_ptr result = malloc(sizeof(Inverted_index));
+    Inverted_index_ptr result = malloc_(sizeof(Inverted_index), "create_inverted_index");
     result->index = create_integer_hash_map();
     read_posting_list(result, file_name);
     return result;
@@ -26,24 +27,24 @@ void read_posting_list(Inverted_index_ptr inverted_index, const char *file_name)
         char* line = array_list_get(lines, i);
         if (strlen(line) != 0){
             Array_list_ptr items = str_split(line, ' ');
-            int* word_id = malloc(sizeof(int));
+            int* word_id = malloc_(sizeof(int), "read_posting_list");
             *word_id = atoi(array_list_get(items, 0));
-            free_array_list(items, free);
+            free_array_list(items, free_);
             i++;
             line = array_list_get(lines, i);
             hash_map_insert(inverted_index->index, word_id, create_posting_list2(line));
         }
     }
-    free_array_list(lines, free);
+    free_array_list(lines, free_);
 }
 
 void free_inverted_index(Inverted_index_ptr inverted_index) {
-    free_hash_map2(inverted_index->index, free, (void (*)(void *)) free_posting_list);
-    free(inverted_index);
+    free_hash_map2(inverted_index->index, free_, (void (*)(void *)) free_posting_list);
+    free_(inverted_index);
 }
 
 Inverted_index_ptr create_inverted_index2(Dictionary_ptr dictionary, Array_list_ptr terms) {
-    Inverted_index_ptr result = malloc(sizeof(Inverted_index));
+    Inverted_index_ptr result = malloc_(sizeof(Inverted_index), "create_inverted_index2");
     result->index = create_integer_hash_map();
     if (!is_array_list_empty(terms)){
         Term_occurrence_ptr term = array_list_get(terms, 0);
@@ -77,13 +78,14 @@ void add_term_to_inverted_index(Inverted_index_ptr inverted_index, int term_id, 
     Posting_list_ptr posting_list;
     if (!hash_map_contains(inverted_index->index, &term_id)){
         posting_list = create_posting_list();
+        add_to_posting_list(posting_list, doc_id);
+        int* id = malloc_(sizeof(int), "add_term_to_inverted_index");
+        *id = term_id;
+        hash_map_insert(inverted_index->index, id, posting_list);
     } else {
         posting_list = hash_map_get(inverted_index->index, &term_id);
+        add_to_posting_list(posting_list, doc_id);
     }
-    add_to_posting_list(posting_list, doc_id);
-    int* id = malloc(sizeof(int));
-    *id = term_id;
-    hash_map_insert(inverted_index->index, id, posting_list);
 }
 
 void save_inverted_index(Inverted_index_ptr inverted_index, char *file_name) {
@@ -108,6 +110,7 @@ Query_result_ptr search_inverted_index(Inverted_index_ptr inverted_index, Query_
         if (term_index != -1){
             array_list_add(query_terms, hash_map_get(inverted_index->index, &term_index));
         } else {
+            free_array_list(query_terms, NULL);
             return create_query_result();
         }
     }
@@ -142,5 +145,5 @@ void auto_complete_word(Inverted_index_ptr inverted_index, Array_list_ptr word_l
             }
         }
     }
-    free_array_list(counts, free);
+    free_array_list(counts, free_);
 }

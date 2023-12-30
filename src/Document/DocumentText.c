@@ -2,7 +2,7 @@
 // Created by Olcay Taner YILDIZ on 4.09.2023.
 //
 
-#include <stdlib.h>
+#include <Memory/Memory.h>
 #include "DocumentText.h"
 #include "../Index/TermOccurrence.h"
 
@@ -20,7 +20,7 @@ Hash_set_ptr construct_distinct_word_list(const Corpus* corpus, Term_type term_t
                     if (j < sentence_word_count(sentence) - 1){
                         String_ptr st = create_string4(sentence_get_word(sentence, j), " ", sentence_get_word(sentence, j + 1));
                         hash_set_insert(words, st->s);
-                        free(st);
+                        free_(st);
                     }
             }
         }
@@ -36,7 +36,7 @@ Array_list_ptr construct_term_list(const Corpus* corpus, int doc_id, Term_type t
         for (int j = 0; j < sentence_word_count(sentence); j++){
             switch (term_type) {
                 case TOKEN:
-                    array_list_add(terms, create_term_occurrence(sentence_get_word(sentence, j), doc_id, size));
+                    array_list_add(terms, create_term_occurrence(clone_string(sentence_get_word(sentence, j)), doc_id, size));
                     size++;
                     break;
                 case PHRASE:

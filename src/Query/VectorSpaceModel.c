@@ -4,13 +4,17 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <Memory/Memory.h>
 #include "VectorSpaceModel.h"
 
-Vector_space_model_ptr create_vector_space_model(int *term_frequencies, int *document_frequencies, int document_size,
-                                                 Term_weighting term_weighting, Document_weighting document_weighting) {
-    Vector_space_model_ptr result = malloc(sizeof(Vector_space_model));
+Vector_space_model_ptr create_vector_space_model(int *term_frequencies,
+                                                 int *document_frequencies,
+                                                 int document_size,
+                                                 Term_weighting term_weighting,
+                                                 Document_weighting document_weighting) {
+    Vector_space_model_ptr result = malloc_(sizeof(Vector_space_model), "create_vector_space_model");
     result->document_size = document_size;
-    result->model = malloc(document_size * sizeof(double ));
+    result->model = malloc_(document_size * sizeof(double), "create_vector_space_model");
     double sum = 0.0;
     for (int i = 0; i < result->document_size; i++){
         result->model[i] = weighting(term_frequencies[i], document_frequencies[i], document_size, term_weighting, document_weighting);
@@ -23,8 +27,8 @@ Vector_space_model_ptr create_vector_space_model(int *term_frequencies, int *doc
 }
 
 void free_vector_space_model(Vector_space_model_ptr vector_space_model) {
-    free(vector_space_model->model);
-    free(vector_space_model);
+    free_(vector_space_model->model);
+    free_(vector_space_model);
 }
 
 double get_weight(const Vector_space_model* vector_space_model, int index) {

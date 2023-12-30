@@ -3,17 +3,18 @@
 //
 
 #include <stdlib.h>
+#include <Memory/Memory.h>
 #include "IncidenceMatrix.h"
 #include "TermOccurrence.h"
 #include "TermDictionary.h"
 
 Incidence_matrix_ptr create_incidence_matrix(int dictionary_size, int document_size) {
-    Incidence_matrix_ptr result = malloc(sizeof(Incidence_matrix));
+    Incidence_matrix_ptr result = malloc_(sizeof(Incidence_matrix), "create_incidence_matrix_1");
     result->dictionary_size = dictionary_size;
     result->document_size = document_size;
-    result->incidence_matrix = malloc(dictionary_size * sizeof(bool*));
+    result->incidence_matrix = malloc_(dictionary_size * sizeof(bool*), "create_incidence_matrix_2");
     for (int i = 0; i < dictionary_size; i++){
-        result->incidence_matrix[i] = calloc(document_size, sizeof(bool));
+        result->incidence_matrix[i] = calloc_(document_size, sizeof(bool),"create_incidence_matrix_3");
         for (int j = 0; j < document_size; j++){
             result->incidence_matrix[i][j] = false;
         }
@@ -44,15 +45,15 @@ void set(Incidence_matrix_ptr incidence_matrix, int row, int col) {
 
 void free_incidence_matrix(Incidence_matrix_ptr incidence_matrix) {
     for (int i = 0; i < incidence_matrix->dictionary_size; i++){
-        free(incidence_matrix->incidence_matrix[i]);
+        free_(incidence_matrix->incidence_matrix[i]);
     }
-    free(incidence_matrix->incidence_matrix);
-    free(incidence_matrix);
+    free_(incidence_matrix->incidence_matrix);
+    free_(incidence_matrix);
 }
 
 Query_result_ptr search_incidence_matrix(Incidence_matrix_ptr incidence_matrix, Query_ptr query, Dictionary_ptr dictionary) {
     Query_result_ptr result = create_query_result();
-    bool* result_row = malloc(incidence_matrix->document_size * sizeof(bool));
+    bool* result_row = malloc_(incidence_matrix->document_size * sizeof(bool), "search_incidence_matrix");
     for (int i = 0; i < incidence_matrix->document_size; i++){
         result_row[i] = true;
     }
@@ -63,6 +64,7 @@ Query_result_ptr search_incidence_matrix(Incidence_matrix_ptr incidence_matrix, 
                 result_row[j] = result_row[j] && incidence_matrix->incidence_matrix[term_index][j];
             }
         } else {
+            free_(result_row);
             return result;
         }
     }
@@ -71,6 +73,6 @@ Query_result_ptr search_incidence_matrix(Incidence_matrix_ptr incidence_matrix, 
             add_to_query_result2(result, i);
         }
     }
-    free(result_row);
+    free_(result_row);
     return result;
 }

@@ -2,13 +2,13 @@
 // Created by Olcay Taner YILDIZ on 3.09.2023.
 //
 
-#include <stdlib.h>
 #include <Corpus.h>
 #include <TurkishSplitter.h>
+#include <Memory/Memory.h>
 #include "Document.h"
 
 Document_ptr create_document(Document_type documentType, const char *absolute_file_name, const char *file_name, int doc_id) {
-    Document_ptr result = malloc(sizeof(Document));
+    Document_ptr result = malloc_(sizeof(Document), "create_document");
     result->doc_id = doc_id;
     result->absolute_file_name = str_copy(result->absolute_file_name, absolute_file_name);
     result->file_name = str_copy(result->file_name, file_name);
@@ -61,7 +61,7 @@ Corpus_ptr load_document(Document_ptr document) {
 }
 
 void free_document(Document_ptr document) {
-    free(document->absolute_file_name);
-    free(document->file_name);
-    free(document);
+    free_(document->absolute_file_name);
+    free_(document->file_name);
+    free_(document);
 }

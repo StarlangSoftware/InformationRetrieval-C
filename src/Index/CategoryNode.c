@@ -2,15 +2,15 @@
 // Created by Olcay Taner YILDIZ on 27.08.2023.
 //
 
-#include <stdlib.h>
 #include <Dictionary/Word.h>
 #include <string.h>
 #include "CategoryNode.h"
 #include "Term.h"
 #include "TermDictionary.h"
+#include "Memory/Memory.h"
 
 Category_node_ptr create_category_node(char *name, Category_node_ptr parent) {
-    Category_node_ptr result = malloc(sizeof(Category_node));
+    Category_node_ptr result = malloc_(sizeof(Category_node), "create_category_node");
     result->category_words = str_split(name, ' ');
     result->children = create_array_list();
     result->counts = create_counter_hash_map((unsigned int (*)(const void *, int)) hash_function_int,
@@ -27,10 +27,10 @@ void add_child(Category_node_ptr category_node, Category_node_ptr child) {
 }
 
 void free_category_node(Category_node_ptr category_node) {
-    free_array_list(category_node->category_words, (void (*)(void *)) free);
+    free_array_list(category_node->category_words, (void (*)(void *)) free_);
     free_array_list(category_node->children, (void (*)(void *)) free_category_node);
-    free_counter_hash_map2(category_node->counts, free);
-    free(category_node);
+    free_counter_hash_map2(category_node->counts, free_);
+    free_(category_node);
 }
 
 char *get_name(const Category_node* category_node) {
@@ -38,7 +38,7 @@ char *get_name(const Category_node* category_node) {
     for (int i = 0; i < category_node->category_words->size; i++){
         size += 1 + strlen((char*) array_list_get(category_node->category_words, i));
     }
-    char* result = malloc(size * sizeof(char));
+    char* result = malloc_(size * sizeof(char), "get_name");
     strcpy(result, (char*) array_list_get(category_node->category_words, 0));
     for (int i = 1; i < category_node->category_words->size; i++){
         strcat(result, " ");
@@ -52,10 +52,10 @@ Category_node_ptr get_child(const Category_node* category_node, const char *name
         Category_node_ptr child = array_list_get(category_node->children, i);
         char* child_name = get_name(child);
         if (strcmp(child_name, name) == 0){
-            free(child_name);
+            free_(child_name);
             return child;
         }
-        free(child_name);
+        free_(child_name);
     }
     return NULL;
 }
@@ -63,9 +63,13 @@ Category_node_ptr get_child(const Category_node* category_node, const char *name
 void add_counts(Category_node_ptr category_node, int term_id, int count) {
     Category_node_ptr current = category_node;
     while (current->parent != NULL){
-        int* id = malloc(sizeof(int));
-        *id = term_id;
-        put_counter_hash_map_n_times(current->counts, id, count);
+        if (count_counter_hash_map(current->counts, &term_id) > 0){
+            put_counter_hash_map_n_times(current->counts, &term_id, count);
+        } else {
+            int* id = malloc_(sizeof(int), "add_counts");
+            *id = term_id;
+            put_counter_hash_map_n_times(current->counts, id, count);
+        }
         current = current->parent;
     }
 }
@@ -81,7 +85,7 @@ String_ptr category_node_to_string(const Category_node *category_node) {
         } else {
             s = create_string2(name);
         }
-        free(name);
+        free_(name);
         return s;
     }
     return create_string();
@@ -104,6 +108,7 @@ void set_representative_count_node(Category_node_ptr category_node, int represen
             Hash_node_ptr hash_node = array_list_get(top_list, i);
             put_counter_hash_map_n_times(category_node->counts, hash_node->key, *(int*)hash_node->value);
         }
+        free_array_list(top_list, NULL);
     }
 }
 

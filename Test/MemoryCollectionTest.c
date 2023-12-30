@@ -6,17 +6,13 @@
 #include "../src/Document/Parameter.h"
 #include "../src/Document/MemoryCollection.h"
 
-void test_incidence_matrix_small(){
-    Parameter_ptr parameter = create_parameter();
-    parameter->index_type = INCIDENCE_MATRIX;
-    Memory_collection_ptr collection = create_memory_collection("../../testCollection2", parameter);
+void test_incidence_matrix_small(Memory_collection_ptr collection){
     if (collection_size(collection) != 2){
         printf("Error in collection size %d\n", collection_size(collection));
     }
     if (vocabulary_size(collection) != 26){
         printf("Error in vocabulary size %d\n", vocabulary_size(collection));
     }
-    free_memory_collection(collection);
 }
 
 void test_incidence_matrix_single_query(Memory_collection_ptr collection, char* s, int size){
@@ -32,10 +28,7 @@ void test_incidence_matrix_single_query(Memory_collection_ptr collection, char* 
     free_search_parameter(search_parameter);
 }
 
-void test_incidence_matrix_query(){
-    Parameter_ptr parameter = create_parameter();
-    parameter->index_type = INCIDENCE_MATRIX;
-    Memory_collection_ptr collection = create_memory_collection("../../testCollection2", parameter);
+void test_incidence_matrix_query(Memory_collection_ptr collection){
     test_incidence_matrix_single_query(collection, "Brutus", 2);
     test_incidence_matrix_single_query(collection, "Brutus Caesar", 2);
     test_incidence_matrix_single_query(collection, "enact", 1);
@@ -56,10 +49,7 @@ void test_inverted_matrix_single_query(Memory_collection_ptr collection, char* s
     free_search_parameter(search_parameter);
 }
 
-void test_inverted_index_boolean_query(){
-    Parameter_ptr parameter = create_parameter();
-    parameter->index_type = INVERTED_INDEX;
-    Memory_collection_ptr collection = create_memory_collection("../../testCollection2", parameter);
+void test_inverted_index_boolean_query(Memory_collection_ptr collection){
     test_inverted_matrix_single_query(collection, "Brutus", 2);
     test_inverted_matrix_single_query(collection, "Brutus Caesar", 2);
     test_inverted_matrix_single_query(collection, "enact", 1);
@@ -80,10 +70,7 @@ void test_positional_index_single_query(Memory_collection_ptr collection, char* 
     free_search_parameter(search_parameter);
 }
 
-void test_positional_index_boolean_query(){
-    Parameter_ptr parameter = create_parameter();
-    parameter->index_type = INVERTED_INDEX;
-    Memory_collection_ptr collection = create_memory_collection("../../testCollection2", parameter);
+void test_positional_index_boolean_query(Memory_collection_ptr collection){
     test_positional_index_single_query(collection, "Julius Caesar", 2);
     test_positional_index_single_query(collection, "I was killed", 1);
     test_positional_index_single_query(collection, "The noble Brutus", 1);
@@ -149,11 +136,7 @@ void test_attribute_single_query(Memory_collection_ptr collection, char* s, int 
     free_search_parameter(search_parameter);
 }
 
-void test_attribute_query(){
-    Parameter_ptr parameter = create_parameter();
-    parameter->document_type = CATEGORICAL;
-    parameter->indexes_from_file = true;
-    Memory_collection_ptr collection = create_memory_collection("../../testCollection3", parameter);
+void test_attribute_query(Memory_collection_ptr collection){
     test_attribute_single_query(collection, "Çift Yönlü", 10);
     test_attribute_single_query(collection, "Müzikli", 4);
     test_attribute_single_query(collection, "Çift Yönlü Alüminyum Bebek Arabası", 2);
@@ -173,23 +156,34 @@ void test_categorical_single_query(Memory_collection_ptr collection, char* s, in
     free_search_parameter(search_parameter);
 }
 
-void test_categorical_query(){
-    Parameter_ptr parameter = create_parameter();
-    parameter->document_type = CATEGORICAL;
-    parameter->indexes_from_file = true;
-    Memory_collection_ptr collection = create_memory_collection("../../testCollection3", parameter);
+void test_categorical_query(Memory_collection_ptr collection){
     test_categorical_single_query(collection, "Çift Yönlü Bebek Arabası", 10);
     test_categorical_single_query(collection, "Terlik", 5);
 }
 
 int main(){
-    test_incidence_matrix_small();
-    test_incidence_matrix_query();
-    test_inverted_index_boolean_query();
-    test_positional_index_boolean_query();
+    Parameter_ptr parameter;
+    Memory_collection_ptr collection;
+    parameter = create_parameter();
+    parameter->index_type = INCIDENCE_MATRIX;
+    collection = create_memory_collection("../../testCollection2", parameter);
+    test_incidence_matrix_small(collection);
+    test_incidence_matrix_query(collection);
+    free_memory_collection(collection);
+    parameter = create_parameter();
+    parameter->index_type = INVERTED_INDEX;
+    collection = create_memory_collection("../../testCollection2", parameter);
+    test_inverted_index_boolean_query(collection);
+    test_positional_index_boolean_query(collection);
+    free_memory_collection(collection);
     test_load_indexes_from_file_small();
     test_limit_number_of_documents_small();
     test_categorical_collection();
-    test_attribute_query();
-    test_categorical_query();
+    parameter = create_parameter();
+    parameter->document_type = CATEGORICAL;
+    parameter->indexes_from_file = true;
+    collection = create_memory_collection("../../testCollection3", parameter);
+    test_attribute_query(collection);
+    test_categorical_query(collection);
+    free_memory_collection(collection);
 }

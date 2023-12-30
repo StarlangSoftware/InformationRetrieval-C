@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <FileUtils.h>
 #include <string.h>
+#include <Memory/Memory.h>
 #include "PositionalIndex.h"
 #include "TermOccurrence.h"
 #include "PositionalPostingList.h"
@@ -13,14 +14,14 @@
 #include "TermDictionary.h"
 
 Positional_index_ptr create_positional_index(const char *file_name) {
-    Positional_index_ptr result = malloc(sizeof(Positional_index));
+    Positional_index_ptr result = malloc_(sizeof(Positional_index), "create_positional_index");
     result->positional_index = create_integer_hash_map();
     read_positional_posting_list(result, file_name);
     return result;
 }
 
 Positional_index_ptr create_positional_index2(Dictionary_ptr dictionary, Array_list_ptr terms) {
-    Positional_index_ptr result = malloc(sizeof(Positional_index));
+    Positional_index_ptr result = malloc_(sizeof(Positional_index), "create_positional_index2");
     result->positional_index = create_integer_hash_map();
     if (!is_array_list_empty(terms)){
         Term_occurrence_ptr term = array_list_get(terms, 0);
@@ -53,8 +54,8 @@ Positional_index_ptr create_positional_index2(Dictionary_ptr dictionary, Array_l
 }
 
 void free_positional_index(Positional_index_ptr positional_index) {
-    free_hash_map2(positional_index->positional_index, free, (void (*)(void *)) free_positional_posting_list);
-    free(positional_index);
+    free_hash_map2(positional_index->positional_index, free_, (void (*)(void *)) free_positional_posting_list);
+    free_(positional_index);
 }
 
 void read_positional_posting_list(Positional_index_ptr positional_index, const char *file_name) {
@@ -67,11 +68,11 @@ void read_positional_posting_list(Positional_index_ptr positional_index, const c
         if (strlen(line) != 0){
             line[strcspn(line, "\n")] = 0;
             Array_list_ptr items = str_split(line, ' ');
-            int* word_id = malloc(sizeof(int));
+            int* word_id = malloc_(sizeof(int), "read_positional_posting_list");
             *word_id = atoi(array_list_get(items, 0));
             int count = atoi(array_list_get(items, 1));
             hash_map_insert(positional_index->positional_index, word_id, create_positional_posting_list(input_file, count));
-            free_array_list(items, free);
+            free_array_list(items, free_);
         }
         input = fgets(line, MAX_LINE_LENGTH, input_file);
     }
@@ -82,13 +83,14 @@ void add_position_to_positional_index(Positional_index_ptr positional_index, int
     Positional_posting_list_ptr positional_posting_list;
     if (!hash_map_contains(positional_index->positional_index, &term_id)){
         positional_posting_list = create_positional_posting_list2();
+        add_to_positional_posting_list(positional_posting_list, doc_id, position);
+        int* id = malloc_(sizeof(int), "add_position_to_positional_index");
+        *id = term_id;
+        hash_map_insert(positional_index->positional_index, id, positional_posting_list);
     } else {
         positional_posting_list = hash_map_get(positional_index->positional_index, &term_id);
+        add_to_positional_posting_list(positional_posting_list, doc_id, position);
     }
-    add_to_positional_posting_list(positional_posting_list, doc_id, position);
-    int* id = malloc(sizeof(int));
-    *id = term_id;
-    hash_map_insert(positional_index->positional_index, id, positional_posting_list);
 }
 
 void save_positional_index(Positional_index_ptr positional_index, char *file_name) {
@@ -135,8 +137,11 @@ Query_result_ptr positional_search(Positional_index_ptr positional_index, Query_
     }
 }
 
-Query_result_ptr ranked_search(Positional_index_ptr positional_index, Query_ptr query, Dictionary_ptr dictionary,
-                               Array_list_ptr documents, const Search_parameter *search_parameter) {
+Query_result_ptr ranked_search(Positional_index_ptr positional_index,
+                               Query_ptr query,
+                               Dictionary_ptr dictionary,
+                               Array_list_ptr documents,
+                               const Search_parameter *search_parameter) {
     int N = documents->size;
     Hash_map_ptr scores = create_integer_hash_map();
     Query_result_ptr result = create_query_result();
@@ -158,16 +163,16 @@ Query_result_ptr ranked_search(Positional_index_ptr positional_index, Query_ptr 
                                              search_parameter->document_weighting);
                     int* id;
                     double* current_score;
-                    id = malloc(sizeof(int));
-                    *id = doc_id;
                     if (hash_map_contains(scores, &doc_id)){
                         current_score = hash_map_get(scores, &doc_id);
                         *current_score += score;
                     } else {
-                        current_score = malloc(sizeof(double ));
+                        id = malloc_(sizeof(int), "ranked_search_1");
+                        *id = doc_id;
+                        current_score = malloc_(sizeof(double), "ranked_search_2");
                         *current_score = score;
+                        hash_map_insert(scores, id, current_score);
                     }
-                    hash_map_insert(scores, id, current_score);
                 }
             }
         }
@@ -180,12 +185,12 @@ Query_result_ptr ranked_search(Positional_index_ptr positional_index, Query_ptr 
         add_to_query_result(result, *doc_id, (*score) / document->size);
     }
     free_array_list(keys, NULL);
-    free_hash_map2(scores, free, free);
+    free_hash_map2(scores, free_, free_);
     return result;
 }
 
 int *get_term_frequencies(Positional_index_ptr positional_index, int doc_id) {
-    int* tf = malloc(positional_index->positional_index->count * sizeof(int));
+    int* tf = malloc_(positional_index->positional_index->count * sizeof(int), "get_term_frequencies");
     int i = 0;
     Array_list_ptr values = value_list(positional_index->positional_index);
     for (int j = 0; j < values->size; j++){
@@ -203,7 +208,7 @@ int *get_term_frequencies(Positional_index_ptr positional_index, int doc_id) {
 }
 
 int *get_document_frequencies(Positional_index_ptr positional_index) {
-    int* df = malloc(positional_index->positional_index->count * sizeof(int));
+    int* df = malloc_(positional_index->positional_index->count * sizeof(int), "get_document_frequencies");
     int i = 0;
     Array_list_ptr values = value_list(positional_index->positional_index);
     for (int j = 0; j < values->size; j++) {
@@ -216,7 +221,7 @@ int *get_document_frequencies(Positional_index_ptr positional_index) {
 }
 
 int *get_document_sizes(Positional_index_ptr positional_index, int document_size) {
-    int* sizes = malloc(document_size * sizeof(int));
+    int* sizes = malloc_(document_size * sizeof(int), "get_document_sizes");
     Array_list_ptr values = value_list(positional_index->positional_index);
     for (int j = 0; j < values->size; j++) {
         Positional_posting_list_ptr positional_posting_list = array_list_get(values, j);

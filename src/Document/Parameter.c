@@ -3,10 +3,11 @@
 //
 
 #include <stdlib.h>
+#include <Memory/Memory.h>
 #include "Parameter.h"
 
 Parameter_ptr create_parameter() {
-    Parameter_ptr parameter = malloc(sizeof(Parameter));
+    Parameter_ptr parameter = malloc_(sizeof(Parameter), "create_parameter");
     parameter->index_type = INVERTED_INDEX;
     parameter->indexes_from_file = false;
     parameter->normalize_document = false;
@@ -22,5 +23,5 @@ Parameter_ptr create_parameter() {
 }
 
 void free_parameter(Parameter_ptr parameter) {
-    free(parameter);
+    free_(parameter);
 }

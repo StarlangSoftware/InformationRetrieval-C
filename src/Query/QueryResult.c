@@ -3,12 +3,13 @@
 //
 
 #include <stdlib.h>
+#include <Memory/Memory.h>
 #include "QueryResult.h"
 #include "QueryResultItem.h"
 #include "Heap/Heap.h"
 
 Query_result_ptr create_query_result() {
-    Query_result_ptr result = malloc(sizeof(Query_result));
+    Query_result_ptr result = malloc_(sizeof(Query_result), "create_query_result");
     result->items = create_array_list();
     return result;
 }
@@ -43,7 +44,7 @@ void get_best(Query_result_ptr query_result, int K) {
     for (int i = 0; i < K && !is_heap_empty(min_heap); i++){
         array_list_insert(query_result->items, 0, delete_top(min_heap));
     }
-    free_heap(min_heap, NULL);
+    free_heap(min_heap, (void (*)(void *)) free_query_result_item);
 }
 
 Query_result_ptr intersection_fast_search(const Query_result *first, const Query_result *second) {
@@ -111,5 +112,5 @@ Query_result_ptr intersection_linear_search(const Query_result *first, const Que
 
 void free_query_result(Query_result_ptr query_result) {
     free_array_list(query_result->items, (void (*)(void *)) free_query_result_item);
-    free(query_result);
+    free_(query_result);
 }

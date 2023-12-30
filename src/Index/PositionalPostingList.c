@@ -6,13 +6,14 @@
 #include <FileUtils.h>
 #include <Dictionary/Word.h>
 #include <string.h>
+#include <Memory/Memory.h>
 #include "PositionalPostingList.h"
 #include "PositionalPosting.h"
 #include "Posting.h"
 
 Positional_posting_list_ptr create_positional_posting_list(FILE *input_file, int count) {
     char line[MAX_LINE_LENGTH];
-    Positional_posting_list_ptr result = malloc(sizeof(Positional_posting_list));
+    Positional_posting_list_ptr result = malloc_(sizeof(Positional_posting_list), "create_positional_posting_list");
     result->postings = create_array_list();
     for (int i = 0; i < count; i++){
         fgets(line, MAX_LINE_LENGTH, input_file);
@@ -24,18 +25,19 @@ Positional_posting_list_ptr create_positional_posting_list(FILE *input_file, int
             int positionalPosting = atoi(((String_ptr)array_list_get(ids, j + 2))->s);
             add_to_positional_posting_list(result, doc_id, positionalPosting);
         }
+        free_array_list(ids, (void (*)(void *)) free_string_ptr);
     }
     return result;
 }
 
 Positional_posting_list_ptr create_positional_posting_list2() {
-    Positional_posting_list_ptr result = malloc(sizeof(Positional_posting_list));
+    Positional_posting_list_ptr result = malloc_(sizeof(Positional_posting_list), "create_positional_posting_list2");
     result->postings = create_array_list();
     return result;
 }
 
 Positional_posting_list_ptr clone_positional_posting_list(Positional_posting_list_ptr positional_posting_list) {
-    Positional_posting_list_ptr result = malloc(sizeof(Positional_posting_list));
+    Positional_posting_list_ptr result = malloc_(sizeof(Positional_posting_list), "clone_positional_posting_list");
     result->postings = create_array_list();
     for (int i = 0; i < positional_posting_list->postings->size; i++){
         Positional_posting_ptr positional_posting = array_list_get(positional_posting_list->postings, i);
@@ -46,7 +48,7 @@ Positional_posting_list_ptr clone_positional_posting_list(Positional_posting_lis
 
 void free_positional_posting_list(Positional_posting_list_ptr positional_posting_list) {
     free_array_list(positional_posting_list->postings, (void (*)(void *)) free_positional_posting);
-    free(positional_posting_list);
+    free_(positional_posting_list);
 }
 
 int size_of_positional_posting_list(const Positional_posting_list* positional_posting_list) {

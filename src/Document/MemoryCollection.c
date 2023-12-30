@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <dirent.h>
+#include <Memory/Memory.h>
 #include "MemoryCollection.h"
 #include "Document.h"
 #include "../Index/TermDictionary.h"
@@ -40,10 +41,10 @@ void load_categories(Memory_collection_ptr memory_collection) {
                 Document_ptr document = array_list_get(memory_collection->documents, doc_id);
                 set_category(document, memory_collection->category_tree, array_list_get(items, 1));
             }
-            free_array_list(items, free);
+            free_array_list(items, free_);
         }
     }
-    free_array_list(lines, free);
+    free_array_list(lines, free_);
 }
 
 void construct_n_gram_index(Memory_collection_ptr memory_collection) {
@@ -58,7 +59,7 @@ void construct_n_gram_index(Memory_collection_ptr memory_collection) {
 }
 
 Memory_collection_ptr create_memory_collection(const char *directory_name, Parameter_ptr parameter) {
-    Memory_collection_ptr result = malloc(sizeof(Memory_collection));
+    Memory_collection_ptr result = malloc_(sizeof(Memory_collection), "create_memory_collection");
     result->parameter = parameter;
     result->name = str_copy(result->name, directory_name);
     load_attribute_list(result);
@@ -105,22 +106,22 @@ void read_documents(Memory_collection_ptr memory_collection, const char *directo
 }
 
 void free_memory_collection(Memory_collection_ptr memory_collection) {
-    free_dictionary(memory_collection->dictionary);
+    free_term_dictionary(memory_collection->dictionary);
     if (memory_collection->index_type != INCIDENCE_MATRIX){
         free_inverted_index(memory_collection->inverted_index);
         if (memory_collection->positional_index != NULL){
             free_positional_index(memory_collection->positional_index);
         }
         if (memory_collection->phrase_dictionary != NULL){
-            free_dictionary(memory_collection->phrase_dictionary);
+            free_term_dictionary(memory_collection->phrase_dictionary);
             free_inverted_index(memory_collection->phrase_index);
         }
         if (memory_collection->phrase_positional_index != NULL){
             free_positional_index(memory_collection->phrase_positional_index);
         }
         if (memory_collection->bi_gram_dictionary != NULL){
-            free_dictionary(memory_collection->bi_gram_dictionary);
-            free_dictionary(memory_collection->tri_gram_dictionary);
+            free_term_dictionary(memory_collection->bi_gram_dictionary);
+            free_term_dictionary(memory_collection->tri_gram_dictionary);
             free_inverted_index(memory_collection->bi_gram_index);
             free_inverted_index(memory_collection->tri_gram_index);
         }
@@ -132,8 +133,9 @@ void free_memory_collection(Memory_collection_ptr memory_collection) {
     }
     free_parameter(memory_collection->parameter);
     free_array_list(memory_collection->documents, (void (*)(void *)) free_document);
-    free_hash_set(memory_collection->attribute_list, free);
-    free(memory_collection);
+    free_hash_set(memory_collection->attribute_list, free_);
+    free_(memory_collection->name);
+    free_(memory_collection);
 }
 
 void load_indexes_from_file(Memory_collection_ptr memory_collection, const char *directory) {
@@ -146,7 +148,7 @@ void load_indexes_from_file(Memory_collection_ptr memory_collection, const char 
             Document_ptr doc = array_list_get(memory_collection->documents, i);
             doc->size = sizes[doc->doc_id];
         }
-        free(sizes);
+        free_(sizes);
     } else {
         memory_collection->positional_index = NULL;
     }
@@ -190,6 +192,11 @@ Array_list_ptr construct_terms(const Memory_collection* memory_collection, Term_
         doc_terms = construct_term_list(document_txt, doc->doc_id, term_type);
         array_list_add_all(terms, doc_terms);
         free_array_list(doc_terms, NULL);
+        free_(document_txt->file_name);
+        free_array_list(document_txt->sentences, NULL);
+        free_array_list(document_txt->paragraphs, (void (*)(void *)) free_paragraph);
+        free_counter_hash_map(document_txt->word_list);
+        free_(document_txt);
     }
     array_list_sort(terms, (int (*)(const void *, const void *)) compare_term_occurrence);
     return terms;
@@ -243,6 +250,7 @@ void construct_indexes_in_memory(Memory_collection_ptr memory_collection) {
             }
             break;
     }
+    free_array_list(terms, (void (*)(void *)) free_term_occurrence);
 }
 
 void save_categories(const Memory_collection* memory_collection) {
@@ -334,8 +342,8 @@ Query_result_ptr
 attribute_search(const Memory_collection* memory_collection, Query_ptr query, const Search_parameter* parameter) {
     Query_ptr term_attributes = create_query2();
     Query_ptr phrase_attributes = create_query2();
-    Query_result_ptr term_result = create_query_result();
-    Query_result_ptr phrase_result = create_query_result();
+    Query_result_ptr term_result = NULL;
+    Query_result_ptr phrase_result = NULL;
     Query_result_ptr attribute_result, filtered_result;
     Query_ptr filtered_query = filter_attributes(query, memory_collection->attribute_list, term_attributes, phrase_attributes);
     if (size_of_query(term_attributes) > 0){
@@ -351,19 +359,29 @@ attribute_search(const Memory_collection* memory_collection, Query_ptr query, co
             attribute_result = term_result;
         } else {
             attribute_result = intersection_fast_search(term_result, phrase_result);
+            free_query_result(term_result);
+            free_query_result(phrase_result);
         }
     }
+    free_query(term_attributes);
+    free_query(phrase_attributes);
     if (size_of_query(filtered_query) == 0){
+        free_query(filtered_query);
         return attribute_result;
     } else {
         if (parameter->retrieval_type != RANKED){
             filtered_result = search_with_inverted_index(memory_collection, filtered_query, parameter);
-            return intersection_fast_search(filtered_result, attribute_result);
+            free_query(filtered_query);
+            Query_result_ptr result = intersection_fast_search(filtered_result, attribute_result);
+            free_query_result(filtered_result);
+            free_query_result(attribute_result);
+            return result;
         } else {
             filtered_result = ranked_search(memory_collection->positional_index,
                                             filtered_query,
                                             memory_collection->dictionary,memory_collection->documents,
                                             parameter);
+            free_query(filtered_query);
             Query_result_ptr tmp_result;
             if (size_of_query_result(attribute_result) < 10){
                 tmp_result = intersection_linear_search(filtered_result, attribute_result);
@@ -371,6 +389,7 @@ attribute_search(const Memory_collection* memory_collection, Query_ptr query, co
                 tmp_result = intersection_binary_search(filtered_result, attribute_result);
             }
             free_query_result(filtered_result);
+            free_query_result(attribute_result);
             get_best(tmp_result, parameter->documents_retrieved);
             return tmp_result;
         }
@@ -387,7 +406,10 @@ search_collection(const Memory_collection* memory_collection, Query_ptr query, c
             current_result = search_with_inverted_index(memory_collection, query, search_parameter);
         }
         Array_list_ptr categories = get_categories(memory_collection->category_tree, query, memory_collection->dictionary, search_parameter->category_determination_type);
-        return filter_according_to_categories(memory_collection, current_result, categories);
+        Query_result_ptr result = filter_according_to_categories(memory_collection, current_result, categories);
+        free_array_list(categories, NULL);
+        free_query_result(current_result);
+        return result;
     } else {
         switch (memory_collection->index_type) {
             case INCIDENCE_MATRIX:

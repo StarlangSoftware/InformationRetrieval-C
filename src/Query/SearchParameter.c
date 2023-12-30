@@ -3,10 +3,11 @@
 //
 
 #include <stdlib.h>
+#include <Memory/Memory.h>
 #include "SearchParameter.h"
 
 Search_parameter_ptr create_search_parameter() {
-    Search_parameter_ptr result = malloc(sizeof(Search_parameter));
+    Search_parameter_ptr result = malloc_(sizeof(Search_parameter), "create_search_parameter");
     result->retrieval_type = RANKED;
     result->document_weighting = NO_IDF;
     result->term_weighting = NATURAL;
@@ -18,5 +19,5 @@ Search_parameter_ptr create_search_parameter() {
 }
 
 void free_search_parameter(Search_parameter_ptr search_parameter) {
-    free(search_parameter);
+    free_(search_parameter);
 }

@@ -34,4 +34,6 @@ int get_term_dictionary_word_index(const Dictionary* dictionary, const char *nam
 
 void sort_term_dictionary(Dictionary_ptr dictionary);
 
+void free_term_dictionary(Dictionary_ptr dictionary);
+
 #endif //INFORMATIONRETRIEVAL_TERMDICTIONARY_H

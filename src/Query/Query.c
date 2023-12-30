@@ -2,14 +2,14 @@
 // Created by Olcay Taner YILDIZ on 30.08.2023.
 //
 
-#include <stdlib.h>
 #include <Dictionary/Word.h>
 #include <string.h>
 #include <RegularExpression.h>
+#include <Memory/Memory.h>
 #include "Query.h"
 
 Query_ptr create_query(char *query) {
-    Query_ptr result = malloc(sizeof(Query));
+    Query_ptr result = malloc_(sizeof(Query), "create_query");
     result->terms = create_array_list();
     Array_list_ptr terms = str_split(query, ' ');
     for (int i = 0; i < terms->size; i++){
@@ -20,14 +20,14 @@ Query_ptr create_query(char *query) {
 }
 
 Query_ptr create_query2() {
-    Query_ptr result = malloc(sizeof(Query));
+    Query_ptr result = malloc_(sizeof(Query), "create_query2");
     result->terms = create_array_list();
     return result;
 }
 
 void free_query(Query_ptr query) {
-    free_array_list(query->terms, (void (*)(void *)) free);
-    free(query);
+    free_array_list(query->terms, (void (*)(void *)) free_);
+    free_(query);
 }
 
 char* get_term(Query_ptr query, int index) {
@@ -51,6 +51,7 @@ Query_ptr filter_attributes(Query_ptr query,
                 char* tmp = str_copy(tmp, pair->s);
                 array_list_add(phrase_attributes->terms, tmp);
                 i += 2;
+                free_string_ptr(pair);
                 continue;
             }
             free_string_ptr(pair);

@@ -6,6 +6,7 @@
 #include <FileUtils.h>
 #include <string.h>
 #include <stdlib.h>
+#include <Memory/Memory.h>
 #include "TermDictionary.h"
 #include "Term.h"
 #include "TermOccurrence.h"
@@ -40,10 +41,16 @@ Dictionary_ptr create_term_dictionary2(const char *file_name) {
     return result;
 }
 
+void free_term_dictionary(Dictionary_ptr dictionary) {
+    free_array_list(dictionary->words, (void (*)(void *)) free_term);
+    free_hash_map(dictionary->word_map, free_);
+    free_(dictionary);
+}
+
 void update_word_map_term_dictionary(Dictionary_ptr dictionary) {
     for (int i = 0; i < dictionary->words->size; i++) {
         Term_ptr word = array_list_get(dictionary->words, i);
-        int *index = malloc(sizeof(int));
+        int *index = malloc_(sizeof(int), "update_word_map_term_dictionary");
         *index = i;
         hash_map_insert(dictionary->word_map, word->name, index);
     }
@@ -90,7 +97,7 @@ Dictionary_ptr create_term_dictionary4(Hash_set_ptr words) {
         add_term(result, name, term_id);
         term_id++;
     }
-    free_array_list(word_list, (void (*)(void *)) free);
+    free_array_list(word_list, (void (*)(void *)) free_);
     sort_term_dictionary(result);
     return result;
 }
@@ -172,6 +179,7 @@ Array_list_ptr construct_terms_from_dictionary(const Dictionary *dictionary, int
         char* word = term->name;
         Array_list_ptr term_list = construct_n_grams(word, i, k);
         array_list_add_all(terms, term_list);
+        free_array_list(term_list, NULL);
     }
     array_list_sort(terms, (int (*)(const void *, const void *)) compare_term_occurrence);
     return terms;
