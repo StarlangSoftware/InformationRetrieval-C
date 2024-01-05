@@ -80,7 +80,7 @@ void test_positional_index_boolean_query(Memory_collection_ptr collection){
 void test_load_indexes_from_file_small(){
     Parameter_ptr parameter = create_parameter();
     parameter->indexes_from_file = true;
-    Memory_collection_ptr collection = create_memory_collection("../../testCollection2", parameter);
+    Memory_collection_ptr collection = create_memory_collection("../testCollection2", parameter);
     if (collection_size(collection) != 2){
         printf("Error in collection size %d\n", collection_size(collection));
     }
@@ -95,7 +95,7 @@ void test_limit_number_of_documents_small(){
     parameter->n_gram_index = false;
     parameter->limit_number_of_documents_loaded = true;
     parameter->document_limit = 1;
-    Memory_collection_ptr collection = create_memory_collection("../../testCollection2", parameter);
+    Memory_collection_ptr collection = create_memory_collection("../testCollection2", parameter);
     if (collection_size(collection) != 1){
         printf("Error in collection size %d\n", collection_size(collection));
     }
@@ -111,7 +111,7 @@ void test_categorical_collection(){
     parameter->indexes_from_file = true;
     parameter->phrase_index = false;
     parameter->n_gram_index = false;
-    Memory_collection_ptr collection = create_memory_collection("../../testCollection3", parameter);
+    Memory_collection_ptr collection = create_memory_collection("../testCollection3", parameter);
     if (collection_size(collection) != 1000){
         printf("Error in collection size %d\n", collection_size(collection));
     }
@@ -166,13 +166,13 @@ int main(){
     Memory_collection_ptr collection;
     parameter = create_parameter();
     parameter->index_type = INCIDENCE_MATRIX;
-    collection = create_memory_collection("../../testCollection2", parameter);
+    collection = create_memory_collection("../testCollection2", parameter);
     test_incidence_matrix_small(collection);
     test_incidence_matrix_query(collection);
     free_memory_collection(collection);
     parameter = create_parameter();
     parameter->index_type = INVERTED_INDEX;
-    collection = create_memory_collection("../../testCollection2", parameter);
+    collection = create_memory_collection("../testCollection2", parameter);
     test_inverted_index_boolean_query(collection);
     test_positional_index_boolean_query(collection);
     free_memory_collection(collection);
@@ -182,7 +182,7 @@ int main(){
     parameter = create_parameter();
     parameter->document_type = CATEGORICAL;
     parameter->indexes_from_file = true;
-    collection = create_memory_collection("../../testCollection3", parameter);
+    collection = create_memory_collection("../testCollection3", parameter);
     test_attribute_query(collection);
     test_categorical_query(collection);
     free_memory_collection(collection);
