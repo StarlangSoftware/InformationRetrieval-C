@@ -1,11 +1,9 @@
 cmake_minimum_required(VERSION 3.23)
-project(InformationRetrieval C)
-
+project(InformationRetrieval)
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_FLAGS "-O3")
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
+find_package(corpus_c REQUIRED)
 
-add_library(InformationRetrieval src/Index/CategoryNode.c src/Index/CategoryNode.h src/Index/CategoryTree.c src/Index/CategoryTree.h src/Index/Posting.c src/Index/Posting.h src/Index/PostingSkip.c src/Index/PostingSkip.h src/Index/PostingList.c src/Index/PostingList.h src/Index/TermType.h src/Index/TermWeighting.h src/Document/IndexType.h src/Document/DocumentWeighting.h src/Document/DocumentType.h src/Query/CategoryDeterminationType.h src/Query/FocusType.h src/Query/RetrievalType.h src/Document/Parameter.c src/Document/Parameter.h src/Index/Term.c src/Index/Term.h src/Index/TermOccurrence.c src/Index/TermOccurrence.h src/Query/SearchParameter.c src/Query/SearchParameter.h src/Index/PositionalPosting.c src/Index/PositionalPosting.h src/Query/QueryResultItem.c src/Query/QueryResultItem.h src/Query/QueryResult.c src/Query/QueryResult.h src/Query/VectorSpaceModel.c src/Query/VectorSpaceModel.h src/Query/Query.c src/Query/Query.h src/Index/PositionalPostingList.c src/Index/PositionalPostingList.h src/Index/TermDictionary.c src/Index/TermDictionary.h src/Index/IncidenceMatrix.c src/Index/IncidenceMatrix.h src/Index/InvertedIndex.c src/Index/InvertedIndex.h src/Index/PositionalIndex.c src/Index/PositionalIndex.h src/Document/Document.c src/Document/Document.h src/Document/DocumentText.c src/Document/DocumentText.h src/Document/MemoryCollection.c src/Document/MemoryCollection.h)
-target_link_libraries(InformationRetrieval ${CONAN_LIBS})
+add_library(InformationRetrieval Index/CategoryNode.c Index/CategoryNode.h Index/CategoryTree.c Index/CategoryTree.h Index/Posting.c Index/Posting.h Index/PostingSkip.c Index/PostingSkip.h Index/PostingList.c Index/PostingList.h Index/TermType.h Index/TermWeighting.h Document/IndexType.h Document/DocumentWeighting.h Document/DocumentType.h Query/CategoryDeterminationType.h Query/FocusType.h Query/RetrievalType.h Document/Parameter.c Document/Parameter.h Index/Term.c Index/Term.h Index/TermOccurrence.c Index/TermOccurrence.h Query/SearchParameter.c Query/SearchParameter.h Index/PositionalPosting.c Index/PositionalPosting.h Query/QueryResultItem.c Query/QueryResultItem.h Query/QueryResult.c Query/QueryResult.h Query/VectorSpaceModel.c Query/VectorSpaceModel.h Query/Query.c Query/Query.h Index/PositionalPostingList.c Index/PositionalPostingList.h Index/TermDictionary.c Index/TermDictionary.h Index/IncidenceMatrix.c Index/IncidenceMatrix.h Index/InvertedIndex.c Index/InvertedIndex.h Index/PositionalIndex.c Index/PositionalIndex.h Document/Document.c Document/Document.h Document/DocumentText.c Document/DocumentText.h Document/MemoryCollection.c Document/MemoryCollection.h)
+target_link_libraries(InformationRetrieval corpus_c::corpus_c)

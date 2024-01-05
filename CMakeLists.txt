@@ -1,13 +1,11 @@
 cmake_minimum_required(VERSION 3.23)
-project(InformationRetrieval C)
-
+project(InformationRetrieval)
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_FLAGS "-O3")
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
+find_package(corpus_c REQUIRED)
 
 add_library(InformationRetrieval src/Index/CategoryNode.c src/Index/CategoryNode.h src/Index/CategoryTree.c src/Index/CategoryTree.h src/Index/Posting.c src/Index/Posting.h src/Index/PostingSkip.c src/Index/PostingSkip.h src/Index/PostingList.c src/Index/PostingList.h src/Index/TermType.h src/Index/TermWeighting.h src/Document/IndexType.h src/Document/DocumentWeighting.h src/Document/DocumentType.h src/Query/CategoryDeterminationType.h src/Query/FocusType.h src/Query/RetrievalType.h src/Document/Parameter.c src/Document/Parameter.h src/Index/Term.c src/Index/Term.h src/Index/TermOccurrence.c src/Index/TermOccurrence.h src/Query/SearchParameter.c src/Query/SearchParameter.h src/Index/PositionalPosting.c src/Index/PositionalPosting.h src/Query/QueryResultItem.c src/Query/QueryResultItem.h src/Query/QueryResult.c src/Query/QueryResult.h src/Query/VectorSpaceModel.c src/Query/VectorSpaceModel.h src/Query/Query.c src/Query/Query.h src/Index/PositionalPostingList.c src/Index/PositionalPostingList.h src/Index/TermDictionary.c src/Index/TermDictionary.h src/Index/IncidenceMatrix.c src/Index/IncidenceMatrix.h src/Index/InvertedIndex.c src/Index/InvertedIndex.h src/Index/PositionalIndex.c src/Index/PositionalIndex.h src/Document/Document.c src/Document/Document.h src/Document/DocumentText.c src/Document/DocumentText.h src/Document/MemoryCollection.c src/Document/MemoryCollection.h)
-target_link_libraries(InformationRetrieval ${CONAN_LIBS})
+target_link_libraries(InformationRetrieval corpus_c::corpus_c)
 add_executable(MemoryCollectionTest src/Index/CategoryNode.c src/Index/CategoryNode.h src/Index/CategoryTree.c src/Index/CategoryTree.h src/Index/Posting.c src/Index/Posting.h src/Index/PostingSkip.c src/Index/PostingSkip.h src/Index/PostingList.c src/Index/PostingList.h src/Index/TermType.h src/Index/TermWeighting.h src/Document/IndexType.h src/Document/DocumentWeighting.h src/Document/DocumentType.h src/Query/CategoryDeterminationType.h src/Query/FocusType.h src/Query/RetrievalType.h src/Document/Parameter.c src/Document/Parameter.h src/Index/Term.c src/Index/Term.h src/Index/TermOccurrence.c src/Index/TermOccurrence.h src/Query/SearchParameter.c src/Query/SearchParameter.h src/Index/PositionalPosting.c src/Index/PositionalPosting.h src/Query/QueryResultItem.c src/Query/QueryResultItem.h src/Query/QueryResult.c src/Query/QueryResult.h src/Query/VectorSpaceModel.c src/Query/VectorSpaceModel.h src/Query/Query.c src/Query/Query.h src/Index/PositionalPostingList.c src/Index/PositionalPostingList.h src/Index/TermDictionary.c src/Index/TermDictionary.h src/Index/IncidenceMatrix.c src/Index/IncidenceMatrix.h src/Index/InvertedIndex.c src/Index/InvertedIndex.h src/Index/PositionalIndex.c src/Index/PositionalIndex.h src/Document/Document.c src/Document/Document.h src/Document/DocumentText.c src/Document/DocumentText.h src/Document/MemoryCollection.c src/Document/MemoryCollection.h Test/MemoryCollectionTest.c)
-target_link_libraries(MemoryCollectionTest ${CONAN_LIBS})
+target_link_libraries(MemoryCollectionTest corpus_c::corpus_c)
