@@ -7,15 +7,29 @@
 #include <Memory/Memory.h>
 #include "Document.h"
 
-Document_ptr create_document(Document_type documentType, const char *absolute_file_name, const char *file_name, int doc_id) {
+/**
+ * Constructor for the Document class. Sets the attributes.
+ * @param document_type Type of the document. Can be normal for normal documents, categorical for categorical
+ *                     documents.
+ * @param absolute_file_name Absolute file name of the document
+ * @param file_name Relative file name of the document.
+ * @param doc_id Id of the document
+ */
+Document_ptr create_document(Document_type document_type, const char *absolute_file_name, const char *file_name, int doc_id) {
     Document_ptr result = malloc_(sizeof(Document), "create_document");
     result->doc_id = doc_id;
     result->absolute_file_name = str_copy(result->absolute_file_name, absolute_file_name);
     result->file_name = str_copy(result->file_name, file_name);
-    result->document_type = documentType;
+    result->document_type = document_type;
     return result;
 }
 
+/**
+ * Loads the category of the document and adds it to the category tree. Category information is stored in the first
+ * line of the document.
+ * @param document Current document
+ * @param category_tree Category tree to which new product will be added.
+ */
 void load_category(Document_ptr document, Category_tree_ptr category_tree) {
     if (document->document_type == CATEGORICAL){
         Corpus_ptr corpus = create_corpus2(document->absolute_file_name);
@@ -29,10 +43,23 @@ void load_category(Document_ptr document, Category_tree_ptr category_tree) {
     }
 }
 
+/**
+ * Mutator for the category attribute.
+ * @param document Current document
+ * @param category_tree Category tree to which new category will be added.
+ * @param category New category that will be added
+ */
 void set_category(Document_ptr document, Category_tree_ptr category_tree, char *category) {
     document->category = add_category_hierarchy(category_tree, category);
 }
 
+/**
+ * Loads the document from input stream. For normal documents, it reads as a corpus. For categorical documents, the
+ * first line contains categorical information, second line contains name of the product, third line contains
+ * detailed info about the product.
+ * @param document Current document
+ * @return Loaded document text.
+ */
 Corpus_ptr load_document(Document_ptr document) {
     Corpus_ptr document_text = NULL;
     Corpus_ptr corpus;
@@ -60,6 +87,10 @@ Corpus_ptr load_document(Document_ptr document) {
     return document_text;
 }
 
+/**
+ * Frees memory allocated to the document.
+ * @param document Document to be deallocated.
+ */
 void free_document(Document_ptr document) {
     free_(document->absolute_file_name);
     free_(document->file_name);

@@ -7,6 +7,14 @@
 #include <Memory/Memory.h>
 #include "VectorSpaceModel.h"
 
+/**
+ * Constructor for the VectorSpaceModel class. Calculates the normalized tf-idf vector of a single document.
+ * @param term_frequencies Term frequencies in the document
+ * @param document_frequencies Document frequencies of terms.
+ * @param document_size Number of documents in the collection
+ * @param term_weighting Term weighting scheme applied in term frequency calculation.
+ * @param document_weighting Document weighting scheme applied in document frequency calculation.
+ */
 Vector_space_model_ptr create_vector_space_model(int *term_frequencies,
                                                  int *document_frequencies,
                                                  int document_size,
@@ -31,10 +39,20 @@ void free_vector_space_model(Vector_space_model_ptr vector_space_model) {
     free_(vector_space_model);
 }
 
+/**
+ * Returns the tf-idf value for a column at position index
+ * @param index Position of the column
+ * @return tf-idf value for a column at position index
+ */
 double get_weight(const Vector_space_model* vector_space_model, int index) {
     return vector_space_model->model[index];
 }
 
+/**
+ * Calculates the cosine similarity between this document vector and the given second document vector.
+ * @param second Document vector of the second document.
+ * @return Cosine similarity between this document vector and the given second document vector.
+ */
 double cosine_similarity(const Vector_space_model *first, const Vector_space_model *second) {
     double sum = 0.0;
     for (int i = 0; i < first->document_size; i++){
@@ -43,7 +61,19 @@ double cosine_similarity(const Vector_space_model *first, const Vector_space_mod
     return sum;
 }
 
-double weighting(double term_frequency, double document_frequency, int document_size, Term_weighting term_weighting,
+/**
+ * Calculates tf-idf value of a single word (column) of the document vector.
+ * @param term_frequency Term frequency of this word in the document
+ * @param document_frequency Document frequency of this word.
+ * @param document_size Number of documents in the collection
+ * @param term_weighting Term weighting scheme applied in term frequency calculation.
+ * @param document_weighting Document weighting scheme applied in document frequency calculation.
+ * @return tf-idf value of a single word (column) of the document vector.
+ */
+double weighting(double term_frequency,
+                 double document_frequency,
+                 int document_size,
+                 Term_weighting term_weighting,
                  Document_weighting document_weighting) {
     double multiplier1 = 1, multiplier2 = 1;
     switch (term_weighting){

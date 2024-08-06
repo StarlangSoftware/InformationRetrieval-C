@@ -13,20 +13,38 @@
 #include "../Index/TermOccurrence.h"
 #include "DocumentText.h"
 
+/**
+ * Loads the attribute list from attribute index file. Attributes are single or bi-word phrases representing the
+ * important features of products in the collection. Each line of the attribute file contains either single or a two
+ * word expression.
+ */
 void load_attribute_list(Memory_collection_ptr memory_collection) {
     char name[MAX_LINE_LENGTH];
     sprintf(name, "%s-attributelist.txt", memory_collection->name);
     memory_collection->attribute_list = read_hash_set(name);
 }
 
+/**
+ * Returns size of the document collection.
+ * @return Size of the document collection.
+ */
 int collection_size(const Memory_collection* memory_collection) {
     return memory_collection->documents->size;
 }
 
+/**
+ * Returns size of the term dictionary.
+ * @return Size of the term dictionary.
+ */
 int vocabulary_size(const Memory_collection* memory_collection) {
     return memory_collection->dictionary->words->size;
 }
 
+/**
+ * Loads the category tree for the categorical collections from category index file. Each line of the category index
+ * file stores the index of the category and the category name with its hierarchy. Hierarchy string is obtained by
+ * concatenating the names of all nodes in the path from root node to a leaf node separated with '%'.
+ */
 void load_categories(Memory_collection_ptr memory_collection) {
     char name[MAX_LINE_LENGTH];
     memory_collection->category_tree = create_category_tree(memory_collection->name);
@@ -47,6 +65,9 @@ void load_categories(Memory_collection_ptr memory_collection) {
     free_array_list(lines, free_);
 }
 
+/**
+ * Constructs bi-gram and tri-gram indexes in memory.
+ */
 void construct_n_gram_index(Memory_collection_ptr memory_collection) {
     Array_list_ptr terms = construct_terms_from_dictionary(memory_collection->dictionary, 2);
     memory_collection->bi_gram_dictionary = create_term_dictionary3(terms);
@@ -58,6 +79,12 @@ void construct_n_gram_index(Memory_collection_ptr memory_collection) {
     free_array_list(terms, (void (*)(void *)) free_term_occurrence);
 }
 
+/**
+ * Constructor for the MemoryCollection class. In small collections, dictionary and indexes are kept in memory.
+ * Memory collection also supports categorical documents.
+ * @param directory_name Directory where the document collection resides.
+ * @param parameter Search parameter
+ */
 Memory_collection_ptr create_memory_collection(const char *directory_name, Parameter_ptr parameter) {
     Memory_collection_ptr result = malloc_(sizeof(Memory_collection), "create_memory_collection");
     result->parameter = parameter;
@@ -138,6 +165,11 @@ void free_memory_collection(Memory_collection_ptr memory_collection) {
     free_(memory_collection);
 }
 
+/**
+ * The method loads the term dictionary, inverted index, positional index, phrase and N-Gram indexes from dictionary
+ * and index files to the memory.
+ * @param directory Directory where the document collection resides.
+ */
 void load_indexes_from_file(Memory_collection_ptr memory_collection, const char *directory) {
     memory_collection->dictionary = create_term_dictionary2(directory);
     memory_collection->inverted_index = create_inverted_index(directory);
@@ -183,6 +215,14 @@ void load_indexes_from_file(Memory_collection_ptr memory_collection, const char 
     }
 }
 
+/**
+ * Given the document collection, creates an array list of terms. If term type is TOKEN, the terms are single
+ * word, if the term type is PHRASE, the terms are bi-words. Each document is loaded into memory and
+ * word list is created. Since the dictionary can be kept in memory, all operations can be done in memory.
+ * @param term_type If term type is TOKEN, the terms are single word, if the term type is PHRASE, the terms are
+ *                 bi-words.
+ * @return Array list of terms occurring in the document collection.
+ */
 Array_list_ptr construct_terms(const Memory_collection* memory_collection, Term_type term_type) {
     Array_list_ptr terms = create_array_list();
     Array_list_ptr doc_terms;
@@ -202,6 +242,9 @@ Array_list_ptr construct_terms(const Memory_collection* memory_collection, Term_
     return terms;
 }
 
+/**
+ * The method constructs the term dictionary, inverted index, positional index, phrase and N-Gram indexes in memory.
+ */
 void construct_indexes_in_memory(Memory_collection_ptr memory_collection) {
     Array_list_ptr terms = construct_terms(memory_collection, TOKEN);
     memory_collection->dictionary = create_term_dictionary3(terms);
@@ -253,6 +296,9 @@ void construct_indexes_in_memory(Memory_collection_ptr memory_collection) {
     free_array_list(terms, (void (*)(void *)) free_term_occurrence);
 }
 
+/**
+ * The method saves the category tree for the categorical collections.
+ */
 void save_categories(const Memory_collection* memory_collection) {
     FILE *output_file;
     char name[MAX_LINE_LENGTH];
@@ -267,6 +313,11 @@ void save_categories(const Memory_collection* memory_collection) {
     fclose(output_file);
 }
 
+/**
+ * The method saves the term dictionary, inverted index, positional index, phrase and N-Gram indexes to the dictionary
+ * and index files. If the collection is a categorical collection, categories are also saved to the category
+ * files.
+ */
 void save_memory_collection(const Memory_collection* memory_collection) {
     if (memory_collection->index_type == INVERTED_INDEX){
         save_term_dictionary(memory_collection->dictionary, memory_collection->name);
@@ -298,6 +349,14 @@ void save_memory_collection(const Memory_collection* memory_collection) {
     }
 }
 
+/**
+ * Filters current search result according to the predicted categories from the query string. For every search
+ * result, if it is in one of the predicated categories, is added to the filtered end result. Otherwise, it is
+ * omitted in the end result.
+ * @param current_result Current search result before filtering.
+ * @param categories Predicted categories that match the query string.
+ * @return Filtered query result
+ */
 Query_result_ptr
 filter_according_to_categories(const Memory_collection* memory_collection, const Query_result* current_result,
                                const Array_list* categories) {
@@ -318,6 +377,14 @@ filter_according_to_categories(const Memory_collection* memory_collection, const
     return filtered_result;
 }
 
+/**
+ * The method searches given query string in the document collection using the inverted index according to the
+ * given search parameter. If the search is (i) boolean, inverted index is used (ii) positional, positional
+ * inverted index is used, (iii) ranked, positional inverted index is used with a ranking algorithm at the end.
+ * @param query Query string
+ * @param parameter Search parameter for the query
+ * @return The intermediate result of the query obtained by doing inverted index based search in the collection.
+ */
 Query_result_ptr
 search_with_inverted_index(const Memory_collection* memory_collection, Query_ptr query, const Search_parameter* parameter) {
     Query_result_ptr result;
@@ -338,6 +405,18 @@ search_with_inverted_index(const Memory_collection* memory_collection, Query_ptr
     return create_query_result();
 }
 
+/**
+ * The method searches given query string in the document collection using the attribute list according to the
+ * given search parameter. First, the original query is filtered by removing phrase attributes, shortcuts and single
+ * word attributes. At this stage, we get the word and phrase attributes in the original query and the remaining
+ * words in the original query as two separate queries. Second, both single word and phrase attributes in the
+ * original query are searched in the document collection. Third, these intermediate query results are then
+ * intersected. Fourth, we put this results into either (i) an inverted index (ii) or a ranked based positional
+ * filtering with the filtered query to get the end result.
+ * @param query Query string
+ * @param parameter Search parameter for the query
+ * @return The intermediate result of the query obtained by doing attribute list based search in the collection.
+ */
 Query_result_ptr
 attribute_search(const Memory_collection* memory_collection, Query_ptr query, const Search_parameter* parameter) {
     Query_ptr term_attributes = create_query2();
@@ -396,6 +475,16 @@ attribute_search(const Memory_collection* memory_collection, Query_ptr query, co
     }
 }
 
+/**
+ * Searches a document collection for a given query according to the given search parameters. The documents are
+ * searched using (i) incidence matrix if the index type is incidence matrix, (ii) attribute list if search
+ * attributes option is selected, (iii) inverted index if the index type is inverted index and no attribute
+ * search is done. After the initial search, if there is a categorical focus, it filters the results
+ * according to the predicted categories from the query string.
+ * @param query Query string
+ * @param searchParameter Search parameter for the query
+ * @return The result of the query obtained by doing search in the collection.
+ */
 Query_result_ptr
 search_collection(const Memory_collection* memory_collection, Query_ptr query, const Search_parameter* search_parameter) {
     Query_result_ptr current_result;

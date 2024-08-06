@@ -13,6 +13,10 @@
 #include "../Document/Document.h"
 #include "TermDictionary.h"
 
+/**
+ * Reads the positional inverted index from an input file.
+ * @param fileName Input file name for the positional inverted index.
+ */
 Positional_index_ptr create_positional_index(const char *file_name) {
     Positional_index_ptr result = malloc_(sizeof(Positional_index), "create_positional_index");
     result->positional_index = create_integer_hash_map();
@@ -20,6 +24,13 @@ Positional_index_ptr create_positional_index(const char *file_name) {
     return result;
 }
 
+/**
+ * Constructs a positional inverted index from a list of sorted tokens. The terms array should be sorted before
+ * calling this method. Multiple occurrences of the same term from the same document are enlisted separately in the
+ * index.
+ * @param dictionary Term dictionary
+ * @param terms Sorted list of tokens in the memory collection.
+ */
 Positional_index_ptr create_positional_index2(Dictionary_ptr dictionary, Array_list_ptr terms) {
     Positional_index_ptr result = malloc_(sizeof(Positional_index), "create_positional_index2");
     result->positional_index = create_integer_hash_map();
@@ -58,6 +69,12 @@ void free_positional_index(Positional_index_ptr positional_index) {
     free_(positional_index);
 }
 
+/**
+ * Reads the positional postings list of the positional index from an input file. The postings are stored in n
+ * lines. The first line contains the term id and the number of documents that term occurs. Other n - 1 lines
+ * contain the postings list for that term for a separate document.
+ * @param file_name Positional index file.
+ */
 void read_positional_posting_list(Positional_index_ptr positional_index, const char *file_name) {
     char name[MAX_LINE_LENGTH];
     char line[MAX_LINE_LENGTH];
@@ -79,6 +96,13 @@ void read_positional_posting_list(Positional_index_ptr positional_index, const c
     fclose(input_file);
 }
 
+/**
+ * Adds a possible new term with a position and document id to the positional index. First the term is searched in
+ * the hash map, then the position and the document id is put into the correct postings list.
+ * @param term_id Id of the term
+ * @param doc_id Document id in which the term exists
+ * @param position Position of the term in the document with id docId
+ */
 void add_position_to_positional_index(Positional_index_ptr positional_index, int term_id, int doc_id, int position) {
     Positional_posting_list_ptr positional_posting_list;
     if (!hash_map_contains(positional_index->positional_index, &term_id)){
@@ -93,6 +117,13 @@ void add_position_to_positional_index(Positional_index_ptr positional_index, int
     }
 }
 
+/**
+ * Saves the positional index into the index file. The postings are stored in n lines. The first line contains the
+ * term id and the number of documents that term occurs. Other n - 1 lines contain the postings list for that term
+ * for a separate document.
+ * @param file_name Index file name. Real index file name is created by attaching -positionalPostings.txt to this
+ *                 file name
+ */
 void save_positional_index(Positional_index_ptr positional_index, char *file_name) {
     FILE* output_file;
     char name[MAX_LINE_LENGTH];
@@ -108,6 +139,12 @@ void save_positional_index(Positional_index_ptr positional_index, char *file_nam
     fclose(output_file);
 }
 
+/**
+ * Searches a given query in the document collection using positional index boolean search.
+ * @param query Query string
+ * @param dictionary Term dictionary
+ * @return The result of the query obtained by doing positional index boolean search in the collection.
+ */
 Query_result_ptr positional_search(Positional_index_ptr positional_index, Query_ptr query, Dictionary_ptr dictionary) {
     Positional_posting_list_ptr posting_result = NULL;
     for (int i = 0; i < size_of_query(query); i++){
@@ -137,6 +174,14 @@ Query_result_ptr positional_search(Positional_index_ptr positional_index, Query_
     }
 }
 
+/**
+ * Searches a given query in the document collection using inverted index ranked search.
+ * @param query Query string
+ * @param dictionary Term dictionary
+ * @param documents Document collection
+ * @param search_parameter Search parameter
+ * @return The result of the query obtained by doing inverted index ranked search in the collection.
+ */
 Query_result_ptr ranked_search(Positional_index_ptr positional_index,
                                Query_ptr query,
                                Dictionary_ptr dictionary,
@@ -189,6 +234,11 @@ Query_result_ptr ranked_search(Positional_index_ptr positional_index,
     return result;
 }
 
+/**
+ * Returns the term frequencies  in a given document.
+ * @param doc_id Id of the document
+ * @return Term frequencies of the given document.
+ */
 int *get_term_frequencies(Positional_index_ptr positional_index, int doc_id) {
     int* tf = malloc_(positional_index->positional_index->count * sizeof(int), "get_term_frequencies");
     int i = 0;
@@ -207,6 +257,10 @@ int *get_term_frequencies(Positional_index_ptr positional_index, int doc_id) {
     return tf;
 }
 
+/**
+ * Returns the document frequencies of the terms in the collection.
+ * @return The document frequencies of the terms in the collection.
+ */
 int *get_document_frequencies(Positional_index_ptr positional_index) {
     int* df = malloc_(positional_index->positional_index->count * sizeof(int), "get_document_frequencies");
     int i = 0;
@@ -235,6 +289,10 @@ int *get_document_sizes(Positional_index_ptr positional_index, int document_size
     return sizes;
 }
 
+/**
+ * Calculates and updates the frequency counts of the terms in each category node.
+ * @param documents Document collection.
+ */
 void set_category_counts(Positional_index_ptr positional_index, Array_list_ptr documents) {
     Array_list_ptr keys = key_list(positional_index->positional_index);
     for (int j = 0; j < keys->size; j++) {

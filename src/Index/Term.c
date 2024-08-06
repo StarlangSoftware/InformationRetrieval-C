@@ -8,6 +8,11 @@
 #include <Memory/Memory.h>
 #include "Term.h"
 
+/**
+ * Constructor for the Term class. Sets the fields.
+ * @param name Text of the term
+ * @param term_id Id of the term
+ */
 Term_ptr create_term(const char *name, int term_id) {
     Term_ptr result = malloc_(sizeof(Term), "create_term");
     result->name = str_copy(result->name, name);

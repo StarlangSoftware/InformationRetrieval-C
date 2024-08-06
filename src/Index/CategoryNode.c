@@ -9,6 +9,13 @@
 #include "TermDictionary.h"
 #include "Memory/Memory.h"
 
+/**
+ * Constructor for the category node. Each category is represented as a tree node in the category tree. Category
+ * words are constructed by splitting the name of the category w.r.t. space. Sets the parent node and adds this
+ * node as a child to parent node.
+ * @param name Name of the category.
+ * @param parent Parent node of this node.
+ */
 Category_node_ptr create_category_node(char *name, Category_node_ptr parent) {
     Category_node_ptr result = malloc_(sizeof(Category_node), "create_category_node");
     result->category_words = str_split(name, ' ');
@@ -22,10 +29,18 @@ Category_node_ptr create_category_node(char *name, Category_node_ptr parent) {
     return result;
 }
 
+/**
+ * Adds the given child node to this node.
+ * @param child New child node
+ */
 void add_child(Category_node_ptr category_node, Category_node_ptr child) {
     array_list_add(category_node->children, child);
 }
 
+/**
+ * Frees memory allocated to category node. Frees category_word and children array lists and counts hash map.
+ * @param category_node Category node to be deallocated.
+ */
 void free_category_node(Category_node_ptr category_node) {
     free_array_list(category_node->category_words, (void (*)(void *)) free_);
     free_array_list(category_node->children, (void (*)(void *)) free_category_node);
@@ -33,6 +48,10 @@ void free_category_node(Category_node_ptr category_node) {
     free_(category_node);
 }
 
+/**
+ * Constructs the category name from the category words. Basically combines all category words separated with space.
+ * @return Category name.
+ */
 char *get_name(const Category_node* category_node) {
     unsigned long size = 1 + strlen((char*) array_list_get(category_node->category_words, 0));
     for (int i = 0; i < category_node->category_words->size; i++){
@@ -47,6 +66,11 @@ char *get_name(const Category_node* category_node) {
     return result;
 }
 
+/**
+ * Searches the children of this node for a specific category name.
+ * @param childName Category name of the child.
+ * @return The child with the given category name.
+ */
 Category_node_ptr get_child(const Category_node* category_node, const char *name) {
     for (int i = 0; i < category_node->children->size; i++){
         Category_node_ptr child = array_list_get(category_node->children, i);
@@ -60,6 +84,11 @@ Category_node_ptr get_child(const Category_node* category_node, const char *name
     return NULL;
 }
 
+/**
+ * Adds frequency count of the term to the counts hash map of all ascendants of this node.
+ * @param termId ID of the occurring term.
+ * @param count Frequency of the term.
+ */
 void add_counts(Category_node_ptr category_node, int term_id, int count) {
     Category_node_ptr current = category_node;
     while (current->parent != NULL){
@@ -74,6 +103,11 @@ void add_counts(Category_node_ptr category_node, int term_id, int count) {
     }
 }
 
+/**
+ * Recursive method that returns the hierarchy string of the node. Hierarchy string is obtained by concatenating the
+ * names of all ancestor nodes separated with '%'.
+ * @return Hierarchy string of this node
+ */
 String_ptr category_node_to_string(const Category_node *category_node) {
     if (category_node->parent != NULL){
         String_ptr s;
@@ -91,6 +125,11 @@ String_ptr category_node_to_string(const Category_node *category_node) {
     return create_string();
 }
 
+/**
+ * Checks if the given node is an ancestor of the current node.
+ * @param ancestor Node for which ancestor check will be done
+ * @return True, if the given node is an ancestor of the current node.
+ */
 bool is_descendant(const Category_node *category_node, const Category_node *ancestor) {
     if (category_node == ancestor){
         return true;
@@ -101,6 +140,10 @@ bool is_descendant(const Category_node *category_node, const Category_node *ance
     return is_descendant(category_node->parent, ancestor);
 }
 
+/**
+ * Recursive method that sets the representative count. The representative count filters the most N frequent words.
+ * @param representativeCount Number of representatives.
+ */
 void set_representative_count_node(Category_node_ptr category_node, int representative_count) {
     if (representative_count <= category_node->counts->map->count){
         Array_list_ptr top_list = top_N_counter_hash_map(category_node->counts, representative_count);
@@ -112,6 +155,13 @@ void set_representative_count_node(Category_node_ptr category_node, int represen
     }
 }
 
+/**
+ * Recursive method that checks the query words in the category words of all descendants of this node and
+ * accumulates the nodes that satisfies the condition. If any word  in the query appears in any category word, the
+ * node will be accumulated.
+ * @param query Query string
+ * @param result Accumulator array
+ */
 void get_categories_with_keyword(Category_node_ptr category_node, Query_ptr query, Array_list_ptr result) {
     double category_score = 0;
     for (int i = 0; i < size_of_query(query); i++){
@@ -131,6 +181,13 @@ void get_categories_with_keyword(Category_node_ptr category_node, Query_ptr quer
     }
 }
 
+/**
+ * Recursive method that checks the query words in the category words of all descendants of this node and
+ * accumulates the nodes that satisfies the condition. If any word  in the query appears in any category word, the
+ * node will be accumulated.
+ * @param query Query string
+ * @param result Accumulator array
+ */
 void get_categories_with_cosine(Category_node_ptr category_node, Query_ptr query, Dictionary_ptr dictionary,
                                 Array_list_ptr result) {
     double category_score = 0;

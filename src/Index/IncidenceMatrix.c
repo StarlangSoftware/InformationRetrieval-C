@@ -2,12 +2,17 @@
 // Created by Olcay Taner YILDIZ on 1.09.2023.
 //
 
-#include <stdlib.h>
 #include <Memory/Memory.h>
 #include "IncidenceMatrix.h"
 #include "TermOccurrence.h"
 #include "TermDictionary.h"
 
+/**
+ * Empty constructor for the incidence matrix representation. Initializes the incidence matrix according to the
+ * given dictionary and document size.
+ * @param dictionary_size Number of words in the dictionary (number of distinct words in the collection)
+ * @param document_size Number of documents in the collection
+ */
 Incidence_matrix_ptr create_incidence_matrix(int dictionary_size, int document_size) {
     Incidence_matrix_ptr result = malloc_(sizeof(Incidence_matrix), "create_incidence_matrix_1");
     result->dictionary_size = dictionary_size;
@@ -22,6 +27,12 @@ Incidence_matrix_ptr create_incidence_matrix(int dictionary_size, int document_s
     return result;
 }
 
+/**
+ * Constructs an incidence matrix from a list of sorted tokens in the given terms array.
+ * @param dictionary Term dictionary
+ * @param terms List of tokens in the memory collection.
+ * @param document_size Number of documents in the collection
+ */
 Incidence_matrix_ptr create_incidence_matrix2(Array_list_ptr terms, Dictionary_ptr dictionary, int document_size) {
     Incidence_matrix_ptr result = create_incidence_matrix(size(dictionary), document_size);
     if (terms->size > 0){
@@ -39,6 +50,11 @@ Incidence_matrix_ptr create_incidence_matrix2(Array_list_ptr terms, Dictionary_p
     return result;
 }
 
+/**
+ * Sets the given cell in the incidence matrix to true.
+ * @param row Row no of the cell
+ * @param col Column no of the cell
+ */
 void set(Incidence_matrix_ptr incidence_matrix, int row, int col) {
     incidence_matrix->incidence_matrix[row][col] = true;
 }
@@ -51,6 +67,12 @@ void free_incidence_matrix(Incidence_matrix_ptr incidence_matrix) {
     free_(incidence_matrix);
 }
 
+/**
+ * Searches a given query in the document collection using incidence matrix boolean search.
+ * @param query Query string
+ * @param dictionary Term dictionary
+ * @return The result of the query obtained by doing incidence matrix boolean search in the collection.
+ */
 Query_result_ptr search_incidence_matrix(Incidence_matrix_ptr incidence_matrix, Query_ptr query, Dictionary_ptr dictionary) {
     Query_result_ptr result = create_query_result();
     bool* result_row = malloc_(incidence_matrix->document_size * sizeof(bool), "search_incidence_matrix");

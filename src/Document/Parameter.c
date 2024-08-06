@@ -6,6 +6,9 @@
 #include <Memory/Memory.h>
 #include "Parameter.h"
 
+/**
+ * Empty constructor for the general query search.
+ */
 Parameter_ptr create_parameter() {
     Parameter_ptr parameter = malloc_(sizeof(Parameter), "create_parameter");
     parameter->index_type = INVERTED_INDEX;
@@ -22,6 +25,10 @@ Parameter_ptr create_parameter() {
     return parameter;
 }
 
+/**
+ * Frees memory allocated to the parameter object.
+ * @param parameter Parameter to be deallocated.
+ */
 void free_parameter(Parameter_ptr parameter) {
     free_(parameter);
 }

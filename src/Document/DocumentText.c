@@ -6,6 +6,13 @@
 #include "DocumentText.h"
 #include "../Index/TermOccurrence.h"
 
+/**
+ * Given the corpus, creates a hash set of distinct terms. If term type is TOKEN, the terms are single word, if
+ * the term type is PHRASE, the terms are bi-words.
+ * @param term_type If term type is TOKEN, the terms are single word, if the term type is PHRASE, the terms are
+ *                 bi-words.
+ * @return Hash set of terms occurring in the document.
+ */
 Hash_set_ptr construct_distinct_word_list(const Corpus* corpus, Term_type term_type) {
     Hash_set_ptr words = create_hash_set((unsigned int (*)(const void *, int)) hash_function_string,
                                          (int (*)(const void *, const void *)) compare_string);
@@ -28,6 +35,14 @@ Hash_set_ptr construct_distinct_word_list(const Corpus* corpus, Term_type term_t
     return words;
 }
 
+/**
+ * Given the corpus, creates an array of terms occurring in the document in that order. If term type is TOKEN, the
+ * terms are single word, if the term type is PHRASE, the terms are bi-words.
+ * @param doc_id Id of the document
+ * @param term_type If term type is TOKEN, the terms are single word, if the term type is PHRASE, the terms are
+ *                 bi-words.
+ * @return Array list of terms occurring in the document.
+ */
 Array_list_ptr construct_term_list(const Corpus* corpus, int doc_id, Term_type term_type){
     Array_list_ptr terms = create_array_list();
     int size = 0;

@@ -11,6 +11,13 @@
 #include "PositionalPosting.h"
 #include "Posting.h"
 
+/**
+ * Reads a positional posting list from a file. Reads N lines, where each line stores a positional posting. The
+ * first item in the line shows document id. The second item in the line shows the number of positional postings.
+ * Other items show the positional postings.
+ * @param input_file Input stream to read from.
+ * @param count Number of positional postings for this positional posting list.
+ */
 Positional_posting_list_ptr create_positional_posting_list(FILE *input_file, int count) {
     char line[MAX_LINE_LENGTH];
     Positional_posting_list_ptr result = malloc_(sizeof(Positional_posting_list), "create_positional_posting_list");
@@ -30,6 +37,9 @@ Positional_posting_list_ptr create_positional_posting_list(FILE *input_file, int
     return result;
 }
 
+/**
+ * Constructor of the PositionalPostingList class. Initializes the list.
+ */
 Positional_posting_list_ptr create_positional_posting_list2() {
     Positional_posting_list_ptr result = malloc_(sizeof(Positional_posting_list), "create_positional_posting_list2");
     result->postings = create_array_list();
@@ -51,10 +61,20 @@ void free_positional_posting_list(Positional_posting_list_ptr positional_posting
     free_(positional_posting_list);
 }
 
+/**
+ * Returns the number of positional postings in the posting list.
+ * @return Number of positional postings in the posting list.
+ */
 int size_of_positional_posting_list(const Positional_posting_list* positional_posting_list) {
     return positional_posting_list->postings->size;
 }
 
+/**
+ * Does a binary search on the positional postings list for a specific document id.
+ * @param doc_id Document id to be searched.
+ * @return The position of the document id in the positional posting list. If it does not exist, the method returns
+ * -1.
+ */
 int get_index(const Positional_posting_list* positional_posting_list, int doc_id) {
     int begin = 0, end = size_of_positional_posting_list(positional_posting_list) - 1, middle;
     while (begin <= end){
@@ -73,6 +93,11 @@ int get_index(const Positional_posting_list* positional_posting_list, int doc_id
     return -1;
 }
 
+/**
+ * Converts the positional postings list to a query result object. Simply adds all positional postings one by one
+ * to the result.
+ * @return QueryResult object containing the positional postings in this object.
+ */
 Query_result_ptr to_query_result(const Positional_posting_list *positional_posting_list) {
     Query_result_ptr result = create_query_result();
     for (int i = 0; i < size_of_positional_posting_list(positional_posting_list); i++){
@@ -82,6 +107,11 @@ Query_result_ptr to_query_result(const Positional_posting_list *positional_posti
     return result;
 }
 
+/**
+ * Adds a new positional posting (document id and position) to the posting list.
+ * @param doc_id New document id to be added to the positional posting list.
+ * @param position New position to be added to the positional posting list.
+ */
 void add_to_positional_posting_list(Positional_posting_list_ptr positional_posting_list, int doc_id, int position) {
     int index = get_index(positional_posting_list, doc_id);
     Positional_posting_ptr posting;
@@ -94,10 +124,21 @@ void add_to_positional_posting_list(Positional_posting_list_ptr positional_posti
     add_position(posting, position);
 }
 
+/**
+ * Gets the positional posting at position index.
+ * @param index Position of the positional posting.
+ * @return The positional posting at position index.
+ */
 Positional_posting_ptr get_positional_posting(const Positional_posting_list *positional_posting_list, int index) {
     return array_list_get(positional_posting_list->postings, index);
 }
 
+/**
+ * Returns simple union of two positional postings list p1 and p2. The algorithm assumes the intersection of two
+ * positional postings list is empty, therefore the union is just concatenation of two positional postings lists.
+ * @param second p2
+ * @return Union of two positional postings lists.
+ */
 Positional_posting_list_ptr union_with_positional_posting_list(const Positional_posting_list *first, const Positional_posting_list *second) {
     Positional_posting_list_ptr result = create_positional_posting_list2();
     array_list_add_all(result->postings, first->postings);
@@ -105,6 +146,17 @@ Positional_posting_list_ptr union_with_positional_posting_list(const Positional_
     return result;
 }
 
+/**
+ * Algorithm for the intersection of two positional postings lists p1 and p2. We maintain pointers into both lists
+ * and walk through the two positional postings lists simultaneously, in time linear in the total number of postings
+ * entries. At each step, we compare the docID pointed to by both pointers. If they are not the same, we advance the
+ * pointer pointing to the smaller docID. Otherwise, we advance both pointers and do the same intersection search on
+ * the positional lists of two documents. Similarly, we compare the positions pointed to by both position pointers.
+ * If they are successive, we add the position to the result and advance both position pointers. Otherwise, we
+ * advance the pointer pointing to the smaller position.
+ * @param second p2, second posting list.
+ * @return Intersection of two postings lists p1 and p2.
+ */
 Positional_posting_list_ptr intersection_with_positional_posting_list(const Positional_posting_list *first, const Positional_posting_list *second) {
     int i = 0, j = 0;
     Positional_posting_list_ptr result = create_positional_posting_list2();
@@ -144,6 +196,10 @@ Positional_posting_list_ptr intersection_with_positional_posting_list(const Posi
     return result;
 }
 
+/**
+ * Converts the positional posting list to a string. String is of the form all postings separated via space.
+ * @return String form of the positional posting list.
+ */
 char *positional_posting_list_to_string(const Positional_posting_list *positional_posting_list) {
     char tmp[MAX_LINE_LENGTH];
     for (int i = 0; i < size_of_positional_posting_list(positional_posting_list); i++){
@@ -155,6 +211,11 @@ char *positional_posting_list_to_string(const Positional_posting_list *positiona
     return result;
 }
 
+/**
+ * Prints this object into a file with the given index.
+ * @param output_file Output stream to write the file.
+ * @param index Position of this positional posting list in the inverted index.
+ */
 void positional_posting_list_write_to_file(const Positional_posting_list *positional_posting_list,
                                            FILE *output_file,
                                            int index) {

@@ -6,6 +6,9 @@
 #include <Memory/Memory.h>
 #include "SearchParameter.h"
 
+/**
+ * Empty constructor for SearchParameter object.
+ */
 Search_parameter_ptr create_search_parameter() {
     Search_parameter_ptr result = malloc_(sizeof(Search_parameter), "create_search_parameter");
     result->retrieval_type = RANKED;

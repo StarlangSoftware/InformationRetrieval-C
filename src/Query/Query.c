@@ -8,6 +8,10 @@
 #include <Memory/Memory.h>
 #include "Query.h"
 
+/**
+ * Another constructor of the Query class. Splits the query into multiple words and put them into the terms array.
+ * @param query Query string
+ */
 Query_ptr create_query(char *query) {
     Query_ptr result = malloc_(sizeof(Query), "create_query");
     result->terms = create_array_list();
@@ -19,6 +23,9 @@ Query_ptr create_query(char *query) {
     return result;
 }
 
+/**
+ * Constructor of the Query class. Initializes the terms array.
+ */
 Query_ptr create_query2() {
     Query_ptr result = malloc_(sizeof(Query), "create_query2");
     result->terms = create_array_list();
@@ -30,14 +37,30 @@ void free_query(Query_ptr query) {
     free_(query);
 }
 
+/**
+ * Accessor for the terms array. Returns the term at position index.
+ * @param index Position of the term in the terms array.
+ * @return The term at position index.
+ */
 char* get_term(Query_ptr query, int index) {
     return array_list_get(query->terms, index);
 }
 
+/**
+ * Returns the size of the query, i.e. number of words in the query.
+ * @return Size of the query, i.e. number of words in the query.
+ */
 int size_of_query(Query_ptr query) {
     return query->terms->size;
 }
 
+/**
+ * Filters the original query by removing phrase attributes, shortcuts and single word attributes.
+ * @param attributeList Hash set containing all attributes (phrase and single word)
+ * @param termAttributes New query that will accumulate single word attributes from the original query.
+ * @param phraseAttributes New query that will accumulate phrase attributes from the original query.
+ * @return Filtered query after removing single word and phrase attributes from the original query.
+ */
 Query_ptr filter_attributes(Query_ptr query,
                             Hash_set_ptr attribute_list,
                             Query_ptr term_attributes,

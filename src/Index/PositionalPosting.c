@@ -8,6 +8,10 @@
 #include "PositionalPosting.h"
 #include "Posting.h"
 
+/**
+ * Constructor for the PositionalPosting class. Sets the document id and initializes the position array.
+ * @param doc_id document id of the posting.
+ */
 Positional_posting_ptr create_positional_posting(int doc_id) {
     Positional_posting_ptr result = malloc_(sizeof(Positional_posting), "create_positional_posting");
     result->positions = create_array_list();
@@ -31,14 +35,27 @@ void free_positional_posting(Positional_posting_ptr positional_posting) {
     free_(positional_posting);
 }
 
+/**
+ * Adds a position to the position list.
+ * @param position Position added to the position list.
+ */
 void add_position(Positional_posting_ptr positional_posting, int position) {
     array_list_add(positional_posting->positions, create_posting(position));
 }
 
+/**
+ * Returns size of the position list.
+ * @return Size of the position list.
+ */
 int size_of_positional_posting(const Positional_posting* positional_posting) {
     return positional_posting->positions->size;
 }
 
+/**
+ * Converts the positional posting to a string. String is of the form, document id, number of positions, and all
+ * positions separated via space.
+ * @return String form of the positional posting.
+ */
 char *positional_posting_to_string(const Positional_posting *positional_posting) {
     char tmp[MAX_LINE_LENGTH];
     sprintf(tmp, "%d %d", positional_posting->doc_id, size_of_positional_posting(positional_posting));

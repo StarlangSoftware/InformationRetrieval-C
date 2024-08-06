@@ -2,30 +2,49 @@
 // Created by Olcay Taner YILDIZ on 29.08.2023.
 //
 
-#include <stdlib.h>
 #include <Memory/Memory.h>
 #include "QueryResult.h"
 #include "QueryResultItem.h"
 #include "Heap/Heap.h"
 
+/**
+ * Empty constructor for the QueryResult object.
+ */
 Query_result_ptr create_query_result() {
     Query_result_ptr result = malloc_(sizeof(Query_result), "create_query_result");
     result->items = create_array_list();
     return result;
 }
 
+/**
+ * Adds a new result item to the list of query result.
+ * @param doc_id Document id of the result
+ * @param score Score of the result
+ */
 void add_to_query_result(Query_result_ptr query_result, int doc_id, double score) {
     array_list_add(query_result->items, create_query_result_item(doc_id, score));
 }
 
+/**
+ * Adds a new result item with score 0 to the list of query result.
+ * @param doc_id Document id of the result
+ */
 void add_to_query_result2(Query_result_ptr query_result, int doc_id) {
     array_list_add(query_result->items, create_query_result_item(doc_id, 0.0));
 }
 
+/**
+ * Returns number of results for query
+ * @return Number of results for query
+ */
 int size_of_query_result(const Query_result *query_result) {
     return query_result->items->size;
 }
 
+/**
+ * The method returns K best results from the query result using min heap in O(K log N + N log K) time.
+ * @param K Size of the best subset.
+ */
 void get_best(Query_result_ptr query_result, int K) {
     Heap_ptr min_heap = create_heap(K, (int (*)(void *, void *)) compare_query_result_item);
     for (int i = 0; i < K && i < size_of_query_result(query_result); i++){
@@ -47,6 +66,12 @@ void get_best(Query_result_ptr query_result, int K) {
     free_heap(min_heap, (void (*)(void *)) free_query_result_item);
 }
 
+/**
+ * Given two query results, this method identifies the intersection of those two results by doing parallel iteration
+ * in O(N).
+ * @param second Second query result to be intersected.
+ * @return Intersection of this query result with the second query result
+ */
 Query_result_ptr intersection_fast_search(const Query_result *first, const Query_result *second) {
     Query_result_ptr result = create_query_result();
     int i = 0, j = 0;
@@ -68,6 +93,12 @@ Query_result_ptr intersection_fast_search(const Query_result *first, const Query
     return result;
 }
 
+/**
+ * Given two query results, this method identifies the intersection of those two results by doing binary search on
+ * the second list in O(N log N).
+ * @param second Second query result to be intersected.
+ * @return Intersection of this query result with the second query result
+ */
 Query_result_ptr intersection_binary_search(const Query_result *first, const Query_result *second) {
     Query_result_ptr result = create_query_result();
     for (int i = 0; i < size_of_query_result(first); i++){
@@ -96,6 +127,12 @@ Query_result_ptr intersection_binary_search(const Query_result *first, const Que
     return result;
 }
 
+/**
+ * Given two query results, this method identifies the intersection of those two results by doing exhaustive search
+ * on the second list in O(N^2).
+ * @param second Second query result to be intersected.
+ * @return Intersection of this query result with the second query result
+ */
 Query_result_ptr intersection_linear_search(const Query_result *first, const Query_result *second) {
     Query_result_ptr result = create_query_result();
     for (int i = 0; i < size_of_query_result(first); i++) {
@@ -110,6 +147,10 @@ Query_result_ptr intersection_linear_search(const Query_result *first, const Que
     return result;
 }
 
+/**
+ * Frees memory allocated to the QueryResult object. Frees array list of items.
+ * @param query_result Query result to be deallocated.
+ */
 void free_query_result(Query_result_ptr query_result) {
     free_array_list(query_result->items, (void (*)(void *)) free_query_result_item);
     free_(query_result);

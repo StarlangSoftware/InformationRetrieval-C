@@ -26,7 +26,7 @@ void save_term_dictionary(const Dictionary* dictionary, char* file_name);
 
 Array_list_ptr construct_n_grams(const char* word, int term_id, int k);
 
-Array_list_ptr construct_terms_from_dictionary(const Dictionary* dictionary, int k);
+Array_list_ptr construct_terms_from_dictionary(const Dictionary* dictionary, int N);
 
 Term_ptr get_word_term(const Dictionary* dictionary, const char *name);
 

@@ -12,6 +12,10 @@
 #include "TermOccurrence.h"
 #include "TermDictionary.h"
 
+/**
+ * Reads the inverted index from an input file.
+ * @param file_name Input file name for the inverted index.
+ */
 Inverted_index_ptr create_inverted_index(const char *file_name) {
     Inverted_index_ptr result = malloc_(sizeof(Inverted_index), "create_inverted_index");
     result->index = create_integer_hash_map();
@@ -19,6 +23,12 @@ Inverted_index_ptr create_inverted_index(const char *file_name) {
     return result;
 }
 
+/**
+ * Reads the postings list of the inverted index from an input file. The postings are stored in two lines. The first
+ * line contains the term id and the number of postings for that term. The second line contains the postings
+ * list for that term.
+ * @param file_name Inverted index file.
+ */
 void read_posting_list(Inverted_index_ptr inverted_index, const char *file_name) {
     char name[MAX_LINE_LENGTH];
     sprintf(name, "%s-postings.txt", file_name);
@@ -43,6 +53,13 @@ void free_inverted_index(Inverted_index_ptr inverted_index) {
     free_(inverted_index);
 }
 
+/**
+ * Constructs an inverted index from a list of sorted tokens. The terms array should be sorted before calling this
+ * method. Multiple occurrences of the same term from the same document are merged in the index. Instances of the
+ * same term are then grouped, and the result is split into a postings list.
+ * @param dictionary Term dictionary
+ * @param terms Sorted list of tokens in the memory collection.
+ */
 Inverted_index_ptr create_inverted_index2(Dictionary_ptr dictionary, Array_list_ptr terms) {
     Inverted_index_ptr result = malloc_(sizeof(Inverted_index), "create_inverted_index2");
     result->index = create_integer_hash_map();
@@ -74,6 +91,12 @@ Inverted_index_ptr create_inverted_index2(Dictionary_ptr dictionary, Array_list_
     return result;
 }
 
+/**
+ * Adds a possible new term with a document id to the inverted index. First the term is searched in the hash map,
+ * then the document id is put into the correct postings list.
+ * @param term_id Id of the term
+ * @param doc_id Document id in which the term exists
+ */
 void add_term_to_inverted_index(Inverted_index_ptr inverted_index, int term_id, int doc_id) {
     Posting_list_ptr posting_list;
     if (!hash_map_contains(inverted_index->index, &term_id)){
@@ -88,6 +111,13 @@ void add_term_to_inverted_index(Inverted_index_ptr inverted_index, int term_id, 
     }
 }
 
+/**
+ * Saves the inverted index into the index file. The postings are stored in two lines. The first
+ * line contains the term id and the number of postings for that term. The second line contains the postings
+ * list for that term.
+ * @param file_name Index file name. Real index file name is created by attaching -postings.txt to this
+ *                 file name
+ */
 void save_inverted_index(Inverted_index_ptr inverted_index, char *file_name) {
     FILE* output_file;
     char name[MAX_LINE_LENGTH];
@@ -103,6 +133,12 @@ void save_inverted_index(Inverted_index_ptr inverted_index, char *file_name) {
     fclose(output_file);
 }
 
+/**
+ * Searches a given query in the document collection using inverted index boolean search.
+ * @param query Query string
+ * @param dictionary Term dictionary
+ * @return The result of the query obtained by doing inverted index boolean search in the collection.
+ */
 Query_result_ptr search_inverted_index(Inverted_index_ptr inverted_index, Query_ptr query, Dictionary_ptr dictionary) {
     Array_list_ptr query_terms = create_array_list();
     for (int i = 0; i < size_of_query(query); i++){
@@ -127,6 +163,12 @@ Query_result_ptr search_inverted_index(Inverted_index_ptr inverted_index, Query_
     return query_result;
 }
 
+/**
+ * Constructs a sorted array list of frequency counts for a word list and also sorts the word list according to
+ * those frequencies.
+ * @param word_list Word list for which frequency array is constructed.
+ * @param dictionary Term dictionary
+ */
 void auto_complete_word(Inverted_index_ptr inverted_index, Array_list_ptr word_list, Dictionary_ptr dictionary) {
     Array_list_ptr counts = create_array_list();
     for (int i = 0; i < word_list->size; i++){
