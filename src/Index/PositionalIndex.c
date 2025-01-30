@@ -15,7 +15,7 @@
 
 /**
  * Reads the positional inverted index from an input file.
- * @param fileName Input file name for the positional inverted index.
+ * @param file_name Input file name for the positional inverted index.
  */
 Positional_index_ptr create_positional_index(const char *file_name) {
     Positional_index_ptr result = malloc_(sizeof(Positional_index), "create_positional_index");
@@ -73,6 +73,7 @@ void free_positional_index(Positional_index_ptr positional_index) {
  * Reads the positional postings list of the positional index from an input file. The postings are stored in n
  * lines. The first line contains the term id and the number of documents that term occurs. Other n - 1 lines
  * contain the postings list for that term for a separate document.
+ * @param positional_index Positional index object.
  * @param file_name Positional index file.
  */
 void read_positional_posting_list(Positional_index_ptr positional_index, const char *file_name) {
@@ -99,6 +100,7 @@ void read_positional_posting_list(Positional_index_ptr positional_index, const c
 /**
  * Adds a possible new term with a position and document id to the positional index. First the term is searched in
  * the hash map, then the position and the document id is put into the correct postings list.
+ * @param positional_index Positional index object.
  * @param term_id Id of the term
  * @param doc_id Document id in which the term exists
  * @param position Position of the term in the document with id docId
@@ -121,6 +123,7 @@ void add_position_to_positional_index(Positional_index_ptr positional_index, int
  * Saves the positional index into the index file. The postings are stored in n lines. The first line contains the
  * term id and the number of documents that term occurs. Other n - 1 lines contain the postings list for that term
  * for a separate document.
+ * @param positional_index Positional index object.
  * @param file_name Index file name. Real index file name is created by attaching -positionalPostings.txt to this
  *                 file name
  */
@@ -141,6 +144,7 @@ void save_positional_index(Positional_index_ptr positional_index, char *file_nam
 
 /**
  * Searches a given query in the document collection using positional index boolean search.
+ * @param positional_index Positional index object.
  * @param query Query string
  * @param dictionary Term dictionary
  * @return The result of the query obtained by doing positional index boolean search in the collection.
@@ -176,6 +180,7 @@ Query_result_ptr positional_search(Positional_index_ptr positional_index, Query_
 
 /**
  * Searches a given query in the document collection using inverted index ranked search.
+ * @param positional_index Positional index object.
  * @param query Query string
  * @param dictionary Term dictionary
  * @param documents Document collection
@@ -236,6 +241,7 @@ Query_result_ptr ranked_search(Positional_index_ptr positional_index,
 
 /**
  * Returns the term frequencies  in a given document.
+ * @param positional_index Positional index object.
  * @param doc_id Id of the document
  * @return Term frequencies of the given document.
  */
@@ -259,6 +265,7 @@ int *get_term_frequencies(Positional_index_ptr positional_index, int doc_id) {
 
 /**
  * Returns the document frequencies of the terms in the collection.
+ * @param positional_index Positional index object.
  * @return The document frequencies of the terms in the collection.
  */
 int *get_document_frequencies(Positional_index_ptr positional_index) {
@@ -291,6 +298,7 @@ int *get_document_sizes(Positional_index_ptr positional_index, int document_size
 
 /**
  * Calculates and updates the frequency counts of the terms in each category node.
+ * @param positional_index Positional index object.
  * @param documents Document collection.
  */
 void set_category_counts(Positional_index_ptr positional_index, Array_list_ptr documents) {

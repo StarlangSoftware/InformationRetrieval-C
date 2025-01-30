@@ -18,7 +18,7 @@ typedef struct category_tree Category_tree;
 
 typedef Category_tree* Category_tree_ptr;
 
-Category_tree_ptr create_category_tree(char* root_name);
+Category_tree_ptr create_category_tree(const char* root_name);
 
 void free_category_tree(Category_tree_ptr category_tree);
 

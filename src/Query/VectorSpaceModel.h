@@ -17,8 +17,8 @@ typedef struct vector_space_model Vector_space_model;
 
 typedef Vector_space_model *Vector_space_model_ptr;
 
-Vector_space_model_ptr create_vector_space_model(int* term_frequencies,
-                                                 int* document_frequencies,
+Vector_space_model_ptr create_vector_space_model(const int* term_frequencies,
+                                                 const int* document_frequencies,
                                                  int document_size,
                                                  Term_weighting term_weighting,
                                                  Document_weighting document_weighting);

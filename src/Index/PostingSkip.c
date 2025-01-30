@@ -7,7 +7,7 @@
 
 /**
  * Constructor for the PostingSkip class. Sets the document id.
- * @param Id Document id.
+ * @param id Document id.
  */
 Posting_skip_ptr create_posting_skip(int id) {
     Posting_skip_ptr result = malloc_(sizeof(Posting_skip), "create_posting_skip");
@@ -27,6 +27,7 @@ void free_posting_skip(Posting_skip_ptr posting_skip) {
 
 /**
  * Adds a skip pointer to the next skip posting.
+ * @param posting_skip Posting skip.
  * @param skip Next posting to jump.
  */
 void add_skip(Posting_skip_ptr posting_skip, Posting_skip_ptr skip) {

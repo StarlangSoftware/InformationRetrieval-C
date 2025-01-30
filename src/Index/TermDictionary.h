@@ -18,7 +18,7 @@ Dictionary_ptr create_term_dictionary4(Hash_set_ptr words);
 
 void update_word_map_term_dictionary(Dictionary_ptr dictionary);
 
-void add_term(Dictionary_ptr dictionary, char* name, int term_id);
+void add_term(Dictionary_ptr dictionary, const char* name, int term_id);
 
 int binary_search_term_dictionary(const Dictionary* dictionary, const char* word);
 

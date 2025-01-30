@@ -9,6 +9,7 @@
 /**
  * Given the corpus, creates a hash set of distinct terms. If term type is TOKEN, the terms are single word, if
  * the term type is PHRASE, the terms are bi-words.
+ * @param corpus Corpus to be processed.
  * @param term_type If term type is TOKEN, the terms are single word, if the term type is PHRASE, the terms are
  *                 bi-words.
  * @return Hash set of terms occurring in the document.
@@ -38,6 +39,7 @@ Hash_set_ptr construct_distinct_word_list(const Corpus* corpus, Term_type term_t
 /**
  * Given the corpus, creates an array of terms occurring in the document in that order. If term type is TOKEN, the
  * terms are single word, if the term type is PHRASE, the terms are bi-words.
+ * @param corpus Corpus to be processed.
  * @param doc_id Id of the document
  * @param term_type If term type is TOKEN, the terms are single word, if the term type is PHRASE, the terms are
  *                 bi-words.

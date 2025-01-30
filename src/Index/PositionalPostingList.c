@@ -63,6 +63,7 @@ void free_positional_posting_list(Positional_posting_list_ptr positional_posting
 
 /**
  * Returns the number of positional postings in the posting list.
+ * @param positional_posting_list Positional posting list object.
  * @return Number of positional postings in the posting list.
  */
 int size_of_positional_posting_list(const Positional_posting_list* positional_posting_list) {
@@ -71,6 +72,7 @@ int size_of_positional_posting_list(const Positional_posting_list* positional_po
 
 /**
  * Does a binary search on the positional postings list for a specific document id.
+ * @param positional_posting_list Positional posting list object.
  * @param doc_id Document id to be searched.
  * @return The position of the document id in the positional posting list. If it does not exist, the method returns
  * -1.
@@ -96,6 +98,7 @@ int get_index(const Positional_posting_list* positional_posting_list, int doc_id
 /**
  * Converts the positional postings list to a query result object. Simply adds all positional postings one by one
  * to the result.
+ * @param positional_posting_list Positional posting list object.
  * @return QueryResult object containing the positional postings in this object.
  */
 Query_result_ptr to_query_result(const Positional_posting_list *positional_posting_list) {
@@ -109,6 +112,7 @@ Query_result_ptr to_query_result(const Positional_posting_list *positional_posti
 
 /**
  * Adds a new positional posting (document id and position) to the posting list.
+ * @param positional_posting_list Positional posting list object.
  * @param doc_id New document id to be added to the positional posting list.
  * @param position New position to be added to the positional posting list.
  */
@@ -126,6 +130,7 @@ void add_to_positional_posting_list(Positional_posting_list_ptr positional_posti
 
 /**
  * Gets the positional posting at position index.
+ * @param positional_posting_list Positional posting list object.
  * @param index Position of the positional posting.
  * @return The positional posting at position index.
  */
@@ -136,6 +141,7 @@ Positional_posting_ptr get_positional_posting(const Positional_posting_list *pos
 /**
  * Returns simple union of two positional postings list p1 and p2. The algorithm assumes the intersection of two
  * positional postings list is empty, therefore the union is just concatenation of two positional postings lists.
+ * @param first p1
  * @param second p2
  * @return Union of two positional postings lists.
  */
@@ -154,6 +160,7 @@ Positional_posting_list_ptr union_with_positional_posting_list(const Positional_
  * the positional lists of two documents. Similarly, we compare the positions pointed to by both position pointers.
  * If they are successive, we add the position to the result and advance both position pointers. Otherwise, we
  * advance the pointer pointing to the smaller position.
+ * @param first p1, first posting list.
  * @param second p2, second posting list.
  * @return Intersection of two postings lists p1 and p2.
  */
@@ -198,6 +205,7 @@ Positional_posting_list_ptr intersection_with_positional_posting_list(const Posi
 
 /**
  * Converts the positional posting list to a string. String is of the form all postings separated via space.
+ * @param positional_posting_list Positional posting list object.
  * @return String form of the positional posting list.
  */
 char *positional_posting_list_to_string(const Positional_posting_list *positional_posting_list) {
@@ -213,6 +221,7 @@ char *positional_posting_list_to_string(const Positional_posting_list *positiona
 
 /**
  * Prints this object into a file with the given index.
+ * @param positional_posting_list Positional posting list object.
  * @param output_file Output stream to write the file.
  * @param index Position of this positional posting list in the inverted index.
  */

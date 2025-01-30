@@ -52,6 +52,7 @@ Incidence_matrix_ptr create_incidence_matrix2(Array_list_ptr terms, Dictionary_p
 
 /**
  * Sets the given cell in the incidence matrix to true.
+ * @param incidence_matrix Incidence matrix object.
  * @param row Row no of the cell
  * @param col Column no of the cell
  */
@@ -69,6 +70,7 @@ void free_incidence_matrix(Incidence_matrix_ptr incidence_matrix) {
 
 /**
  * Searches a given query in the document collection using incidence matrix boolean search.
+ * @param incidence_matrix Incidence matrix object.
  * @param query Query string
  * @param dictionary Term dictionary
  * @return The result of the query obtained by doing incidence matrix boolean search in the collection.

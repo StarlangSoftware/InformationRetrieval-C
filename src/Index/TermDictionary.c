@@ -155,10 +155,11 @@ Term_ptr get_word_term(const Dictionary* dictionary, const char *name) {
 /**
  * Adds a new term to the sorted words array. First the term is searched in the words array using binary search,
  * then the word is added into the correct place.
+ * @param dictionary Current dictionary.
  * @param name Lemma of the term
  * @param term_id Id of the term
  */
-void add_term(Dictionary_ptr dictionary, char *name, int term_id) {
+void add_term(Dictionary_ptr dictionary, const char *name, int term_id) {
     int middle = binary_search_term_dictionary(dictionary, name);
     if (middle < 0){
         array_list_insert(dictionary->words, -middle -1, create_term(name, term_id));
@@ -192,6 +193,7 @@ int binary_search_term_dictionary(const Dictionary *dictionary, const char *word
 /**
  * Saves the term dictionary into the dictionary file. Each line stores the term id and the term name separated via
  * space.
+ * @param dictionary Current dictionary.
  * @param file_name Dictionary file name. Real dictionary file name is created by attaching -dictionary.txt to this
  *                 file name
  */
@@ -243,6 +245,7 @@ Array_list_ptr construct_n_grams(const char *word, int term_id, int N) {
 /**
  * Constructs all NGrams for all words in the dictionary. For example, 3 grams for word "term" are "$te", "ter",
  * "erm", "rm$".
+ * @param dictionary Current dictionary.
  * @param N N in NGram.
  * @return A sorted array of NGrams for all words in the dictionary.
  */

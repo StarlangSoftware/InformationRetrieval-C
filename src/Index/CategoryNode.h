@@ -22,7 +22,7 @@ typedef struct category_node Category_node;
 
 typedef Category_node* Category_node_ptr;
 
-Category_node_ptr create_category_node(char* name, Category_node_ptr parent);
+Category_node_ptr create_category_node(const char* name, Category_node_ptr parent);
 
 void free_category_node(Category_node_ptr category_node);
 

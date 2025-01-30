@@ -2,7 +2,6 @@
 // Created by Olcay Taner YILDIZ on 27.08.2023.
 //
 
-#include <Dictionary/Word.h>
 #include <string.h>
 #include "CategoryNode.h"
 #include "Term.h"
@@ -16,7 +15,7 @@
  * @param name Name of the category.
  * @param parent Parent node of this node.
  */
-Category_node_ptr create_category_node(char *name, Category_node_ptr parent) {
+Category_node_ptr create_category_node(const char *name, Category_node_ptr parent) {
     Category_node_ptr result = malloc_(sizeof(Category_node), "create_category_node");
     result->category_words = str_split(name, ' ');
     result->children = create_array_list();
@@ -31,6 +30,7 @@ Category_node_ptr create_category_node(char *name, Category_node_ptr parent) {
 
 /**
  * Adds the given child node to this node.
+ * @param category_node Category node object.
  * @param child New child node
  */
 void add_child(Category_node_ptr category_node, Category_node_ptr child) {
@@ -50,6 +50,7 @@ void free_category_node(Category_node_ptr category_node) {
 
 /**
  * Constructs the category name from the category words. Basically combines all category words separated with space.
+ * @param category_node Category node object.
  * @return Category name.
  */
 char *get_name(const Category_node* category_node) {
@@ -68,7 +69,8 @@ char *get_name(const Category_node* category_node) {
 
 /**
  * Searches the children of this node for a specific category name.
- * @param childName Category name of the child.
+ * @param category_node Category node object.
+ * @param name Category name of the child.
  * @return The child with the given category name.
  */
 Category_node_ptr get_child(const Category_node* category_node, const char *name) {
@@ -86,7 +88,8 @@ Category_node_ptr get_child(const Category_node* category_node, const char *name
 
 /**
  * Adds frequency count of the term to the counts hash map of all ascendants of this node.
- * @param termId ID of the occurring term.
+ * @param category_node Category node object.
+ * @param term_id ID of the occurring term.
  * @param count Frequency of the term.
  */
 void add_counts(Category_node_ptr category_node, int term_id, int count) {
@@ -106,6 +109,7 @@ void add_counts(Category_node_ptr category_node, int term_id, int count) {
 /**
  * Recursive method that returns the hierarchy string of the node. Hierarchy string is obtained by concatenating the
  * names of all ancestor nodes separated with '%'.
+ * @param category_node Category node object.
  * @return Hierarchy string of this node
  */
 String_ptr category_node_to_string(const Category_node *category_node) {
@@ -127,6 +131,7 @@ String_ptr category_node_to_string(const Category_node *category_node) {
 
 /**
  * Checks if the given node is an ancestor of the current node.
+ * @param category_node Category node object.
  * @param ancestor Node for which ancestor check will be done
  * @return True, if the given node is an ancestor of the current node.
  */
@@ -142,7 +147,8 @@ bool is_descendant(const Category_node *category_node, const Category_node *ance
 
 /**
  * Recursive method that sets the representative count. The representative count filters the most N frequent words.
- * @param representativeCount Number of representatives.
+ * @param category_node Category node object.
+ * @param representative_count Number of representatives.
  */
 void set_representative_count_node(Category_node_ptr category_node, int representative_count) {
     if (representative_count <= category_node->counts->map->count){
@@ -159,6 +165,7 @@ void set_representative_count_node(Category_node_ptr category_node, int represen
  * Recursive method that checks the query words in the category words of all descendants of this node and
  * accumulates the nodes that satisfies the condition. If any word  in the query appears in any category word, the
  * node will be accumulated.
+ * @param category_node Category node object.
  * @param query Query string
  * @param result Accumulator array
  */
@@ -185,7 +192,9 @@ void get_categories_with_keyword(Category_node_ptr category_node, Query_ptr quer
  * Recursive method that checks the query words in the category words of all descendants of this node and
  * accumulates the nodes that satisfies the condition. If any word  in the query appears in any category word, the
  * node will be accumulated.
+ * @param category_node Category node object.
  * @param query Query string
+ * @param dictionary Term dictionary
  * @param result Accumulator array
  */
 void get_categories_with_cosine(Category_node_ptr category_node, Query_ptr query, Dictionary_ptr dictionary,

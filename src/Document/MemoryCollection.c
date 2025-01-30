@@ -168,6 +168,7 @@ void free_memory_collection(Memory_collection_ptr memory_collection) {
 /**
  * The method loads the term dictionary, inverted index, positional index, phrase and N-Gram indexes from dictionary
  * and index files to the memory.
+ * @param memory_collection Collection object
  * @param directory Directory where the document collection resides.
  */
 void load_indexes_from_file(Memory_collection_ptr memory_collection, const char *directory) {
@@ -219,6 +220,7 @@ void load_indexes_from_file(Memory_collection_ptr memory_collection, const char 
  * Given the document collection, creates an array list of terms. If term type is TOKEN, the terms are single
  * word, if the term type is PHRASE, the terms are bi-words. Each document is loaded into memory and
  * word list is created. Since the dictionary can be kept in memory, all operations can be done in memory.
+ * @param memory_collection Collection object
  * @param term_type If term type is TOKEN, the terms are single word, if the term type is PHRASE, the terms are
  *                 bi-words.
  * @return Array list of terms occurring in the document collection.
@@ -244,6 +246,7 @@ Array_list_ptr construct_terms(const Memory_collection* memory_collection, Term_
 
 /**
  * The method constructs the term dictionary, inverted index, positional index, phrase and N-Gram indexes in memory.
+ * @param memory_collection Collection object
  */
 void construct_indexes_in_memory(Memory_collection_ptr memory_collection) {
     Array_list_ptr terms = construct_terms(memory_collection, TOKEN);
@@ -298,6 +301,7 @@ void construct_indexes_in_memory(Memory_collection_ptr memory_collection) {
 
 /**
  * The method saves the category tree for the categorical collections.
+ * @param memory_collection Collection object
  */
 void save_categories(const Memory_collection* memory_collection) {
     FILE *output_file;
@@ -317,6 +321,7 @@ void save_categories(const Memory_collection* memory_collection) {
  * The method saves the term dictionary, inverted index, positional index, phrase and N-Gram indexes to the dictionary
  * and index files. If the collection is a categorical collection, categories are also saved to the category
  * files.
+ * @param memory_collection Collection object
  */
 void save_memory_collection(const Memory_collection* memory_collection) {
     if (memory_collection->index_type == INVERTED_INDEX){
@@ -353,6 +358,7 @@ void save_memory_collection(const Memory_collection* memory_collection) {
  * Filters current search result according to the predicted categories from the query string. For every search
  * result, if it is in one of the predicated categories, is added to the filtered end result. Otherwise, it is
  * omitted in the end result.
+ * @param memory_collection Collection object
  * @param current_result Current search result before filtering.
  * @param categories Predicted categories that match the query string.
  * @return Filtered query result
@@ -381,6 +387,7 @@ filter_according_to_categories(const Memory_collection* memory_collection, const
  * The method searches given query string in the document collection using the inverted index according to the
  * given search parameter. If the search is (i) boolean, inverted index is used (ii) positional, positional
  * inverted index is used, (iii) ranked, positional inverted index is used with a ranking algorithm at the end.
+ * @param memory_collection Collection object
  * @param query Query string
  * @param parameter Search parameter for the query
  * @return The intermediate result of the query obtained by doing inverted index based search in the collection.
@@ -413,6 +420,7 @@ search_with_inverted_index(const Memory_collection* memory_collection, Query_ptr
  * original query are searched in the document collection. Third, these intermediate query results are then
  * intersected. Fourth, we put this results into either (i) an inverted index (ii) or a ranked based positional
  * filtering with the filtered query to get the end result.
+ * @param memory_collection Collection object
  * @param query Query string
  * @param parameter Search parameter for the query
  * @return The intermediate result of the query obtained by doing attribute list based search in the collection.
@@ -481,8 +489,9 @@ attribute_search(const Memory_collection* memory_collection, Query_ptr query, co
  * attributes option is selected, (iii) inverted index if the index type is inverted index and no attribute
  * search is done. After the initial search, if there is a categorical focus, it filters the results
  * according to the predicted categories from the query string.
+ * @param memory_collection Collection object
  * @param query Query string
- * @param searchParameter Search parameter for the query
+ * @param search_parameter Search parameter for the query
  * @return The result of the query obtained by doing search in the collection.
  */
 Query_result_ptr

@@ -39,6 +39,7 @@ void free_query(Query_ptr query) {
 
 /**
  * Accessor for the terms array. Returns the term at position index.
+ * @param query Current query object.
  * @param index Position of the term in the terms array.
  * @return The term at position index.
  */
@@ -48,6 +49,7 @@ char* get_term(Query_ptr query, int index) {
 
 /**
  * Returns the size of the query, i.e. number of words in the query.
+ * @param query Current query object.
  * @return Size of the query, i.e. number of words in the query.
  */
 int size_of_query(Query_ptr query) {
@@ -56,9 +58,10 @@ int size_of_query(Query_ptr query) {
 
 /**
  * Filters the original query by removing phrase attributes, shortcuts and single word attributes.
- * @param attributeList Hash set containing all attributes (phrase and single word)
- * @param termAttributes New query that will accumulate single word attributes from the original query.
- * @param phraseAttributes New query that will accumulate phrase attributes from the original query.
+ * @param query Current query object.
+ * @param attribute_list Hash set containing all attributes (phrase and single word)
+ * @param term_attributes New query that will accumulate single word attributes from the original query.
+ * @param phrase_attributes New query that will accumulate phrase attributes from the original query.
  * @return Filtered query after removing single word and phrase attributes from the original query.
  */
 Query_ptr filter_attributes(Query_ptr query,

@@ -18,6 +18,7 @@ Query_result_ptr create_query_result() {
 
 /**
  * Adds a new result item to the list of query result.
+ * @param query_result Query result.
  * @param doc_id Document id of the result
  * @param score Score of the result
  */
@@ -27,6 +28,7 @@ void add_to_query_result(Query_result_ptr query_result, int doc_id, double score
 
 /**
  * Adds a new result item with score 0 to the list of query result.
+ * @param query_result Current query result object.
  * @param doc_id Document id of the result
  */
 void add_to_query_result2(Query_result_ptr query_result, int doc_id) {
@@ -35,6 +37,7 @@ void add_to_query_result2(Query_result_ptr query_result, int doc_id) {
 
 /**
  * Returns number of results for query
+ * @param query_result Current query result object.
  * @return Number of results for query
  */
 int size_of_query_result(const Query_result *query_result) {
@@ -43,6 +46,7 @@ int size_of_query_result(const Query_result *query_result) {
 
 /**
  * The method returns K best results from the query result using min heap in O(K log N + N log K) time.
+ * @param query_result Current query result object.
  * @param K Size of the best subset.
  */
 void get_best(Query_result_ptr query_result, int K) {
@@ -69,6 +73,7 @@ void get_best(Query_result_ptr query_result, int K) {
 /**
  * Given two query results, this method identifies the intersection of those two results by doing parallel iteration
  * in O(N).
+ * @param first First query result to be intersected.
  * @param second Second query result to be intersected.
  * @return Intersection of this query result with the second query result
  */
@@ -96,6 +101,7 @@ Query_result_ptr intersection_fast_search(const Query_result *first, const Query
 /**
  * Given two query results, this method identifies the intersection of those two results by doing binary search on
  * the second list in O(N log N).
+ * @param first First query result to be intersected.
  * @param second Second query result to be intersected.
  * @return Intersection of this query result with the second query result
  */
@@ -130,6 +136,7 @@ Query_result_ptr intersection_binary_search(const Query_result *first, const Que
 /**
  * Given two query results, this method identifies the intersection of those two results by doing exhaustive search
  * on the second list in O(N^2).
+ * @param first First query result to be intersected.
  * @param second Second query result to be intersected.
  * @return Intersection of this query result with the second query result
  */

@@ -10,7 +10,7 @@
  * Simple constructor of the tree. Sets the root node of the tree.
  * @param root_name Category name of the root node.
  */
-Category_tree_ptr create_category_tree(char *root_name) {
+Category_tree_ptr create_category_tree(const char *root_name) {
     Category_tree_ptr result = malloc_(sizeof(Category_tree), "create_category_tree");
     result->root = create_category_node(root_name, NULL);
     return result;
@@ -20,6 +20,7 @@ Category_tree_ptr create_category_tree(char *root_name) {
  * Adds a path (and if required nodes in the path) to the category tree according to the hierarchy string. Hierarchy
  * string is obtained by concatenating the names of all nodes in the path from root node to a leaf node separated
  * with '%'.
+ * @param category_tree Category tree object.
  * @param hierarchy Hierarchy string
  * @return The leaf node added when the hierarchy string is processed.
  */
@@ -40,7 +41,8 @@ Category_node_ptr add_category_hierarchy(Category_tree_ptr category_tree, char *
 
 /**
  * The method sets the representative count. The representative count filters the most N frequent words.
- * @param representativeCount Number of representatives.
+ * @param category_tree Category tree object.
+ * @param representative_count Number of representatives.
  */
 void set_representative_count_tree(Category_tree_ptr category_tree, int representative_count) {
     set_representative_count_node(category_tree->root, representative_count);
@@ -54,6 +56,7 @@ void free_category_tree(Category_tree_ptr category_tree) {
 /**
  * The method checks the query words in the category words of all nodes in the tree and returns the nodes that
  * satisfies the condition. If any word in the query appears in any category word, the node will be returned.
+ * @param category_tree Category tree object.
  * @param query Query string
  * @param dictionary Term dictionary
  * @param category_determination_type Category determination type

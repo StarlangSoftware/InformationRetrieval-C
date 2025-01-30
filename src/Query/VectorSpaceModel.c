@@ -2,7 +2,6 @@
 // Created by Olcay Taner YILDIZ on 30.08.2023.
 //
 
-#include <stdlib.h>
 #include <math.h>
 #include <Memory/Memory.h>
 #include "VectorSpaceModel.h"
@@ -15,8 +14,8 @@
  * @param term_weighting Term weighting scheme applied in term frequency calculation.
  * @param document_weighting Document weighting scheme applied in document frequency calculation.
  */
-Vector_space_model_ptr create_vector_space_model(int *term_frequencies,
-                                                 int *document_frequencies,
+Vector_space_model_ptr create_vector_space_model(const int *term_frequencies,
+                                                 const int *document_frequencies,
                                                  int document_size,
                                                  Term_weighting term_weighting,
                                                  Document_weighting document_weighting) {
@@ -41,6 +40,7 @@ void free_vector_space_model(Vector_space_model_ptr vector_space_model) {
 
 /**
  * Returns the tf-idf value for a column at position index
+ * @param vector_space_model Current vector space model.
  * @param index Position of the column
  * @return tf-idf value for a column at position index
  */
@@ -50,6 +50,7 @@ double get_weight(const Vector_space_model* vector_space_model, int index) {
 
 /**
  * Calculates the cosine similarity between this document vector and the given second document vector.
+ * @param first Document vector of the first document.
  * @param second Document vector of the second document.
  * @return Cosine similarity between this document vector and the given second document vector.
  */

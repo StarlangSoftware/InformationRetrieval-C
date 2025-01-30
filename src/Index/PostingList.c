@@ -47,6 +47,7 @@ Posting_list_ptr clone_posting_list(Posting_list_ptr posting_list) {
 
 /**
  * Adds a new posting (document id) to the posting list.
+ * @param posting_list Posting list object.
  * @param doc_id New document id to be added to the posting list.
  */
 void add_to_posting_list(Posting_list_ptr posting_list, int doc_id) {
@@ -55,6 +56,7 @@ void add_to_posting_list(Posting_list_ptr posting_list, int doc_id) {
 
 /**
  * Returns the number of postings in the posting list.
+ * @param posting_list Posting list object.
  * @return Number of postings in the posting list.
  */
 int size_of_posting_list(const Posting_list* posting_list) {
@@ -66,6 +68,7 @@ int size_of_posting_list(const Posting_list* posting_list) {
  * through the two postings lists simultaneously, in time linear in the total number of postings entries. At each
  * step, we compare the docID pointed to by both pointers. If they are the same, we put that docID in the results
  * list, and advance both pointers. Otherwise, we advance the pointer pointing to the smaller docID.
+ * @param posting_list Posting list object.
  * @param second_list p2, second posting list.
  * @return Intersection of two postings lists p1 and p2.
  */
@@ -93,6 +96,7 @@ Posting_list_ptr intersection_posting_list(const Posting_list *posting_list, con
 /**
  * Returns simple union of two postings list p1 and p2. The algorithm assumes the intersection of two postings list
  * is empty, therefore the union is just concatenation of two postings lists.
+ * @param posting_list Posting list object.
  * @param second_list p2
  * @return Union of two postings lists.
  */
@@ -105,6 +109,7 @@ Posting_list_ptr union_with_posting_list(const Posting_list *posting_list, const
 
 /**
  * Converts the posting list to a string. String is of the form all postings separated via space.
+ * @param posting_list Posting list object.
  * @return String form of the posting list.
  */
 char *posting_list_to_string(const Posting_list *posting_list) {
@@ -121,6 +126,7 @@ char *posting_list_to_string(const Posting_list *posting_list) {
 
 /**
  * Prints this object into a file with the given index.
+ * @param posting_list Posting list object.
  * @param output_file Output stream to write the file.
  * @param index Position of this posting list in the inverted index.
  */
@@ -156,6 +162,7 @@ int compare_posting_list(const Posting_list *first, const Posting_list *second) 
 
 /**
  * Converts the postings list to a query result object. Simply adds all postings one by one to the result.
+ * @param posting_list Posting list object.
  * @return QueryResult object containing the postings in this object.
  */
 Query_result_ptr posting_list_to_query_result(const Posting_list *posting_list) {

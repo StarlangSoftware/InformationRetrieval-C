@@ -37,6 +37,7 @@ void free_positional_posting(Positional_posting_ptr positional_posting) {
 
 /**
  * Adds a position to the position list.
+ * @param positional_posting Positional posting object.
  * @param position Position added to the position list.
  */
 void add_position(Positional_posting_ptr positional_posting, int position) {
@@ -45,6 +46,7 @@ void add_position(Positional_posting_ptr positional_posting, int position) {
 
 /**
  * Returns size of the position list.
+ * @param positional_posting Positional posting object.
  * @return Size of the position list.
  */
 int size_of_positional_posting(const Positional_posting* positional_posting) {
@@ -54,6 +56,7 @@ int size_of_positional_posting(const Positional_posting* positional_posting) {
 /**
  * Converts the positional posting to a string. String is of the form, document id, number of positions, and all
  * positions separated via space.
+ * @param positional_posting Positional posting object.
  * @return String form of the positional posting.
  */
 char *positional_posting_to_string(const Positional_posting *positional_posting) {
