@@ -16,7 +16,7 @@
  * @param parent Parent node of this node.
  */
 Category_node_ptr create_category_node(const char *name, Category_node_ptr parent) {
-    Category_node_ptr result = malloc_(sizeof(Category_node), "create_category_node");
+    Category_node_ptr result = malloc_(sizeof(Category_node));
     result->category_words = str_split(name, ' ');
     result->children = create_array_list();
     result->counts = create_counter_hash_map((unsigned int (*)(const void *, int)) hash_function_int,
@@ -58,7 +58,7 @@ char *get_name(const Category_node* category_node) {
     for (int i = 0; i < category_node->category_words->size; i++){
         size += 1 + strlen((char*) array_list_get(category_node->category_words, i));
     }
-    char* result = malloc_(size * sizeof(char), "get_name");
+    char* result = malloc_(size * sizeof(char));
     strcpy(result, (char*) array_list_get(category_node->category_words, 0));
     for (int i = 1; i < category_node->category_words->size; i++){
         strcat(result, " ");
@@ -98,7 +98,7 @@ void add_counts(Category_node_ptr category_node, int term_id, int count) {
         if (count_counter_hash_map(current->counts, &term_id) > 0){
             put_counter_hash_map_n_times(current->counts, &term_id, count);
         } else {
-            int* id = malloc_(sizeof(int), "add_counts");
+            int* id = malloc_(sizeof(int));
             *id = term_id;
             put_counter_hash_map_n_times(current->counts, id, count);
         }

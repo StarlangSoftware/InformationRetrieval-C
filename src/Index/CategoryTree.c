@@ -11,7 +11,7 @@
  * @param root_name Category name of the root node.
  */
 Category_tree_ptr create_category_tree(const char *root_name) {
-    Category_tree_ptr result = malloc_(sizeof(Category_tree), "create_category_tree");
+    Category_tree_ptr result = malloc_(sizeof(Category_tree));
     result->root = create_category_node(root_name, NULL);
     return result;
 }

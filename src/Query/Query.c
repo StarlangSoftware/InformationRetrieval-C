@@ -13,7 +13,7 @@
  * @param query Query string
  */
 Query_ptr create_query(char *query) {
-    Query_ptr result = malloc_(sizeof(Query), "create_query");
+    Query_ptr result = malloc_(sizeof(Query));
     result->terms = create_array_list();
     Array_list_ptr terms = str_split(query, ' ');
     for (int i = 0; i < terms->size; i++){
@@ -27,7 +27,7 @@ Query_ptr create_query(char *query) {
  * Constructor of the Query class. Initializes the terms array.
  */
 Query_ptr create_query2() {
-    Query_ptr result = malloc_(sizeof(Query), "create_query2");
+    Query_ptr result = malloc_(sizeof(Query));
     result->terms = create_array_list();
     return result;
 }

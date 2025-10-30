@@ -14,7 +14,7 @@
  * Constructor of the PostingList class. Initializes the list.
  */
 Posting_list_ptr create_posting_list() {
-    Posting_list_ptr result = malloc_(sizeof(Posting_list), "create_posting_list");
+    Posting_list_ptr result = malloc_(sizeof(Posting_list));
     result->postings = create_array_list();
     return result;
 }
@@ -24,7 +24,7 @@ Posting_list_ptr create_posting_list() {
  * @param line A string containing postings separated with space character.
  */
 Posting_list_ptr create_posting_list2(char *line) {
-    Posting_list_ptr result = malloc_(sizeof(Posting_list), "create_posting_list2");
+    Posting_list_ptr result = malloc_(sizeof(Posting_list));
     result->postings = create_array_list();
     Array_list_ptr ids = split(line);
     for (int i = 0; i < ids->size; i++){
@@ -36,7 +36,7 @@ Posting_list_ptr create_posting_list2(char *line) {
 }
 
 Posting_list_ptr clone_posting_list(Posting_list_ptr posting_list) {
-    Posting_list_ptr result = malloc_(sizeof(Posting_list), "clone_posting_list");
+    Posting_list_ptr result = malloc_(sizeof(Posting_list));
     result->postings = create_array_list();
     for (int i = 0; i < posting_list->postings->size; i++){
         Posting_ptr posting = array_list_get(posting_list->postings, i);

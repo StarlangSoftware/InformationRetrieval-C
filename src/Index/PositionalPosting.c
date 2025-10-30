@@ -13,14 +13,14 @@
  * @param doc_id document id of the posting.
  */
 Positional_posting_ptr create_positional_posting(int doc_id) {
-    Positional_posting_ptr result = malloc_(sizeof(Positional_posting), "create_positional_posting");
+    Positional_posting_ptr result = malloc_(sizeof(Positional_posting));
     result->positions = create_array_list();
     result->doc_id = doc_id;
     return result;
 }
 
 Positional_posting_ptr clone_positional_posting(Positional_posting_ptr positional_posting) {
-    Positional_posting_ptr result = malloc_(sizeof(Positional_posting), "clone_positional_posting");
+    Positional_posting_ptr result = malloc_(sizeof(Positional_posting));
     result->positions = create_array_list();
     for (int i = 0; i < positional_posting->positions->size; i++){
         Posting_ptr posting = array_list_get(positional_posting->positions, i);

@@ -16,7 +16,7 @@
  * @param doc_id Id of the document
  */
 Document_ptr create_document(Document_type document_type, const char *absolute_file_name, const char *file_name, int doc_id) {
-    Document_ptr result = malloc_(sizeof(Document), "create_document");
+    Document_ptr result = malloc_(sizeof(Document));
     result->doc_id = doc_id;
     result->absolute_file_name = str_copy(result->absolute_file_name, absolute_file_name);
     result->file_name = str_copy(result->file_name, file_name);

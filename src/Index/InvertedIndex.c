@@ -17,7 +17,7 @@
  * @param file_name Input file name for the inverted index.
  */
 Inverted_index_ptr create_inverted_index(const char *file_name) {
-    Inverted_index_ptr result = malloc_(sizeof(Inverted_index), "create_inverted_index");
+    Inverted_index_ptr result = malloc_(sizeof(Inverted_index));
     result->index = create_integer_hash_map();
     read_posting_list(result, file_name);
     return result;
@@ -38,7 +38,7 @@ void read_posting_list(Inverted_index_ptr inverted_index, const char *file_name)
         char* line = array_list_get(lines, i);
         if (strlen(line) != 0){
             Array_list_ptr items = str_split(line, ' ');
-            int* word_id = malloc_(sizeof(int), "read_posting_list");
+            int* word_id = malloc_(sizeof(int));
             *word_id = atoi(array_list_get(items, 0));
             free_array_list(items, free_);
             i++;
@@ -62,7 +62,7 @@ void free_inverted_index(Inverted_index_ptr inverted_index) {
  * @param terms Sorted list of tokens in the memory collection.
  */
 Inverted_index_ptr create_inverted_index2(Dictionary_ptr dictionary, Array_list_ptr terms) {
-    Inverted_index_ptr result = malloc_(sizeof(Inverted_index), "create_inverted_index2");
+    Inverted_index_ptr result = malloc_(sizeof(Inverted_index));
     result->index = create_integer_hash_map();
     if (!is_array_list_empty(terms)){
         Term_occurrence_ptr term = array_list_get(terms, 0);
@@ -104,7 +104,7 @@ void add_term_to_inverted_index(Inverted_index_ptr inverted_index, int term_id, 
     if (!hash_map_contains(inverted_index->index, &term_id)){
         posting_list = create_posting_list();
         add_to_posting_list(posting_list, doc_id);
-        int* id = malloc_(sizeof(int), "add_term_to_inverted_index");
+        int* id = malloc_(sizeof(int));
         *id = term_id;
         hash_map_insert(inverted_index->index, id, posting_list);
     } else {

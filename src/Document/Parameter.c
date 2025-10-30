@@ -9,7 +9,7 @@
  * Empty constructor for the general query search.
  */
 Parameter_ptr create_parameter() {
-    Parameter_ptr parameter = malloc_(sizeof(Parameter), "create_parameter");
+    Parameter_ptr parameter = malloc_(sizeof(Parameter));
     parameter->index_type = INVERTED_INDEX;
     parameter->indexes_from_file = false;
     parameter->normalize_document = false;

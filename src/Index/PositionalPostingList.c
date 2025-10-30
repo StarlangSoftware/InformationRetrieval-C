@@ -20,7 +20,7 @@
  */
 Positional_posting_list_ptr create_positional_posting_list(FILE *input_file, int count) {
     char line[MAX_LINE_LENGTH];
-    Positional_posting_list_ptr result = malloc_(sizeof(Positional_posting_list), "create_positional_posting_list");
+    Positional_posting_list_ptr result = malloc_(sizeof(Positional_posting_list));
     result->postings = create_array_list();
     for (int i = 0; i < count; i++){
         fgets(line, MAX_LINE_LENGTH, input_file);
@@ -41,13 +41,13 @@ Positional_posting_list_ptr create_positional_posting_list(FILE *input_file, int
  * Constructor of the PositionalPostingList class. Initializes the list.
  */
 Positional_posting_list_ptr create_positional_posting_list2() {
-    Positional_posting_list_ptr result = malloc_(sizeof(Positional_posting_list), "create_positional_posting_list2");
+    Positional_posting_list_ptr result = malloc_(sizeof(Positional_posting_list));
     result->postings = create_array_list();
     return result;
 }
 
 Positional_posting_list_ptr clone_positional_posting_list(Positional_posting_list_ptr positional_posting_list) {
-    Positional_posting_list_ptr result = malloc_(sizeof(Positional_posting_list), "clone_positional_posting_list");
+    Positional_posting_list_ptr result = malloc_(sizeof(Positional_posting_list));
     result->postings = create_array_list();
     for (int i = 0; i < positional_posting_list->postings->size; i++){
         Positional_posting_ptr positional_posting = array_list_get(positional_posting_list->postings, i);

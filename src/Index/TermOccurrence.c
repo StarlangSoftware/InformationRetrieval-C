@@ -14,7 +14,7 @@
  * @param position Position of the term in the document for this occurrence.
  */
 Term_occurrence_ptr create_term_occurrence(char* term, int doc_id, int position) {
-    Term_occurrence_ptr result = malloc_(sizeof(Term_occurrence), "create_term_occurrence");
+    Term_occurrence_ptr result = malloc_(sizeof(Term_occurrence));
     result->term = term;
     result->doc_id = doc_id;
     result->position = position;

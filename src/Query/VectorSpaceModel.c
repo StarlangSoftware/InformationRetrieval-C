@@ -19,9 +19,9 @@ Vector_space_model_ptr create_vector_space_model(const int *term_frequencies,
                                                  int document_size,
                                                  Term_weighting term_weighting,
                                                  Document_weighting document_weighting) {
-    Vector_space_model_ptr result = malloc_(sizeof(Vector_space_model), "create_vector_space_model");
+    Vector_space_model_ptr result = malloc_(sizeof(Vector_space_model));
     result->document_size = document_size;
-    result->model = malloc_(document_size * sizeof(double), "create_vector_space_model");
+    result->model = malloc_(document_size * sizeof(double));
     double sum = 0.0;
     for (int i = 0; i < result->document_size; i++){
         result->model[i] = weighting(term_frequencies[i], document_frequencies[i], document_size, term_weighting, document_weighting);

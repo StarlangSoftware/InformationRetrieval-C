@@ -14,12 +14,12 @@
  * @param document_size Number of documents in the collection
  */
 Incidence_matrix_ptr create_incidence_matrix(int dictionary_size, int document_size) {
-    Incidence_matrix_ptr result = malloc_(sizeof(Incidence_matrix), "create_incidence_matrix_1");
+    Incidence_matrix_ptr result = malloc_(sizeof(Incidence_matrix));
     result->dictionary_size = dictionary_size;
     result->document_size = document_size;
-    result->incidence_matrix = malloc_(dictionary_size * sizeof(bool*), "create_incidence_matrix_2");
+    result->incidence_matrix = malloc_(dictionary_size * sizeof(bool*));
     for (int i = 0; i < dictionary_size; i++){
-        result->incidence_matrix[i] = calloc_(document_size, sizeof(bool),"create_incidence_matrix_3");
+        result->incidence_matrix[i] = calloc_(document_size, sizeof(bool));
         for (int j = 0; j < document_size; j++){
             result->incidence_matrix[i][j] = false;
         }
@@ -77,7 +77,7 @@ void free_incidence_matrix(Incidence_matrix_ptr incidence_matrix) {
  */
 Query_result_ptr search_incidence_matrix(Incidence_matrix_ptr incidence_matrix, Query_ptr query, Dictionary_ptr dictionary) {
     Query_result_ptr result = create_query_result();
-    bool* result_row = malloc_(incidence_matrix->document_size * sizeof(bool), "search_incidence_matrix");
+    bool* result_row = malloc_(incidence_matrix->document_size * sizeof(bool));
     for (int i = 0; i < incidence_matrix->document_size; i++){
         result_row[i] = true;
     }

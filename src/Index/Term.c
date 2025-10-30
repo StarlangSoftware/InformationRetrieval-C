@@ -13,7 +13,7 @@
  * @param term_id Id of the term
  */
 Term_ptr create_term(const char *name, int term_id) {
-    Term_ptr result = malloc_(sizeof(Term), "create_term");
+    Term_ptr result = malloc_(sizeof(Term));
     result->name = str_copy(result->name, name);
     result->term_id = term_id;
     return result;

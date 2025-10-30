@@ -3,6 +3,8 @@
 //
 
 #include <stdio.h>
+#include <Memory/Memory.h>
+
 #include "../src/Document/Parameter.h"
 #include "../src/Document/MemoryCollection.h"
 
@@ -162,6 +164,7 @@ void test_categorical_query(Memory_collection_ptr collection){
 }
 
 int main(){
+    start_large_memory_check();
     Parameter_ptr parameter;
     Memory_collection_ptr collection;
     parameter = create_parameter();
@@ -186,4 +189,5 @@ int main(){
     test_attribute_query(collection);
     test_categorical_query(collection);
     free_memory_collection(collection);
+    end_memory_check();
 }

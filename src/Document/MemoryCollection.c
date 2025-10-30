@@ -86,7 +86,7 @@ void construct_n_gram_index(Memory_collection_ptr memory_collection) {
  * @param parameter Search parameter
  */
 Memory_collection_ptr create_memory_collection(const char *directory_name, Parameter_ptr parameter) {
-    Memory_collection_ptr result = malloc_(sizeof(Memory_collection), "create_memory_collection");
+    Memory_collection_ptr result = malloc_(sizeof(Memory_collection));
     result->parameter = parameter;
     result->name = str_copy(result->name, directory_name);
     load_attribute_list(result);

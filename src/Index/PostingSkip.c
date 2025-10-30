@@ -10,7 +10,7 @@
  * @param id Document id.
  */
 Posting_skip_ptr create_posting_skip(int id) {
-    Posting_skip_ptr result = malloc_(sizeof(Posting_skip), "create_posting_skip");
+    Posting_skip_ptr result = malloc_(sizeof(Posting_skip));
     result->id = id;
     result->skip = NULL;
     result->next = NULL;

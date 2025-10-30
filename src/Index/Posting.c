@@ -10,7 +10,7 @@
  * @param id Document id.
  */
 Posting_ptr create_posting(int id) {
-    Posting_ptr result = malloc_(sizeof(Posting), "create_posting");
+    Posting_ptr result = malloc_(sizeof(Posting));
     result->id = id;
     return result;
 }

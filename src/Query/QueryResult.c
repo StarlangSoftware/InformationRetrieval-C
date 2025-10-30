@@ -11,7 +11,7 @@
  * Empty constructor for the QueryResult object.
  */
 Query_result_ptr create_query_result() {
-    Query_result_ptr result = malloc_(sizeof(Query_result), "create_query_result");
+    Query_result_ptr result = malloc_(sizeof(Query_result));
     result->items = create_array_list();
     return result;
 }

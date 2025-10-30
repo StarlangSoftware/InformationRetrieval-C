@@ -66,7 +66,7 @@ void free_term_dictionary(Dictionary_ptr dictionary) {
 void update_word_map_term_dictionary(Dictionary_ptr dictionary) {
     for (int i = 0; i < dictionary->words->size; i++) {
         Term_ptr word = array_list_get(dictionary->words, i);
-        int *index = malloc_(sizeof(int), "update_word_map_term_dictionary");
+        int *index = malloc_(sizeof(int));
         *index = i;
         hash_map_insert(dictionary->word_map, word->name, index);
     }

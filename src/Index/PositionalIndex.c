@@ -18,7 +18,7 @@
  * @param file_name Input file name for the positional inverted index.
  */
 Positional_index_ptr create_positional_index(const char *file_name) {
-    Positional_index_ptr result = malloc_(sizeof(Positional_index), "create_positional_index");
+    Positional_index_ptr result = malloc_(sizeof(Positional_index));
     result->positional_index = create_integer_hash_map();
     read_positional_posting_list(result, file_name);
     return result;
@@ -32,7 +32,7 @@ Positional_index_ptr create_positional_index(const char *file_name) {
  * @param terms Sorted list of tokens in the memory collection.
  */
 Positional_index_ptr create_positional_index2(Dictionary_ptr dictionary, Array_list_ptr terms) {
-    Positional_index_ptr result = malloc_(sizeof(Positional_index), "create_positional_index2");
+    Positional_index_ptr result = malloc_(sizeof(Positional_index));
     result->positional_index = create_integer_hash_map();
     if (!is_array_list_empty(terms)){
         Term_occurrence_ptr term = array_list_get(terms, 0);
@@ -86,7 +86,7 @@ void read_positional_posting_list(Positional_index_ptr positional_index, const c
         if (strlen(line) != 0){
             line[strcspn(line, "\n")] = 0;
             Array_list_ptr items = str_split(line, ' ');
-            int* word_id = malloc_(sizeof(int), "read_positional_posting_list");
+            int* word_id = malloc_(sizeof(int));
             *word_id = atoi(array_list_get(items, 0));
             int count = atoi(array_list_get(items, 1));
             hash_map_insert(positional_index->positional_index, word_id, create_positional_posting_list(input_file, count));
@@ -110,7 +110,7 @@ void add_position_to_positional_index(Positional_index_ptr positional_index, int
     if (!hash_map_contains(positional_index->positional_index, &term_id)){
         positional_posting_list = create_positional_posting_list2();
         add_to_positional_posting_list(positional_posting_list, doc_id, position);
-        int* id = malloc_(sizeof(int), "add_position_to_positional_index");
+        int* id = malloc_(sizeof(int));
         *id = term_id;
         hash_map_insert(positional_index->positional_index, id, positional_posting_list);
     } else {
@@ -217,9 +217,9 @@ Query_result_ptr ranked_search(Positional_index_ptr positional_index,
                         current_score = hash_map_get(scores, &doc_id);
                         *current_score += score;
                     } else {
-                        id = malloc_(sizeof(int), "ranked_search_1");
+                        id = malloc_(sizeof(int));
                         *id = doc_id;
-                        current_score = malloc_(sizeof(double), "ranked_search_2");
+                        current_score = malloc_(sizeof(double));
                         *current_score = score;
                         hash_map_insert(scores, id, current_score);
                     }
@@ -246,7 +246,7 @@ Query_result_ptr ranked_search(Positional_index_ptr positional_index,
  * @return Term frequencies of the given document.
  */
 int *get_term_frequencies(Positional_index_ptr positional_index, int doc_id) {
-    int* tf = malloc_(positional_index->positional_index->count * sizeof(int), "get_term_frequencies");
+    int* tf = malloc_(positional_index->positional_index->count * sizeof(int));
     int i = 0;
     Array_list_ptr values = value_list(positional_index->positional_index);
     for (int j = 0; j < values->size; j++){
@@ -269,7 +269,7 @@ int *get_term_frequencies(Positional_index_ptr positional_index, int doc_id) {
  * @return The document frequencies of the terms in the collection.
  */
 int *get_document_frequencies(Positional_index_ptr positional_index) {
-    int* df = malloc_(positional_index->positional_index->count * sizeof(int), "get_document_frequencies");
+    int* df = malloc_(positional_index->positional_index->count * sizeof(int));
     int i = 0;
     Array_list_ptr values = value_list(positional_index->positional_index);
     for (int j = 0; j < values->size; j++) {
@@ -282,7 +282,7 @@ int *get_document_frequencies(Positional_index_ptr positional_index) {
 }
 
 int *get_document_sizes(Positional_index_ptr positional_index, int document_size) {
-    int* sizes = malloc_(document_size * sizeof(int), "get_document_sizes");
+    int* sizes = malloc_(document_size * sizeof(int));
     Array_list_ptr values = value_list(positional_index->positional_index);
     for (int j = 0; j < values->size; j++) {
         Positional_posting_list_ptr positional_posting_list = array_list_get(values, j);
